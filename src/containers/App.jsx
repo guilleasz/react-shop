@@ -10,8 +10,6 @@ type State = {
   products: Product[]
 }
 
-
-
 export default class App extends React.Component<Props, State> {
   state = {
     products: [],
@@ -19,9 +17,8 @@ export default class App extends React.Component<Props, State> {
 
   componentDidMount() {
     axios.get('/products')
-      .then((res: $AxiosXHR<Product[]>)  => res.data)
-      .then((products: Product[]) => this.setState({ products }))
-
+      .then((res: $AxiosXHR<Product[]>): Product[] => res.data)
+      .then((products: Product[]) => this.setState({ products }));
   }
 
   render() {
@@ -29,6 +26,6 @@ export default class App extends React.Component<Props, State> {
       <div>
         <Grid products={this.state.products} />
       </div>
-    )
+    );
   }
 }

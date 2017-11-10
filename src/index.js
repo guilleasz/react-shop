@@ -3,8 +3,8 @@
 
 import React from 'react';
 import { render } from 'react-dom';
-import App from './containers/App'
+import App from './containers/App';
 
-const appDiv = document.getElementById('app')
+const appDiv = document.getElementById('app');
 
-appDiv && render(<App />, appDiv);
+if (appDiv) render(<App />, appDiv);
