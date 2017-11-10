@@ -246,14 +246,9 @@ Como cualquier click handler vamos a recibir información del evento como argume
 <li onClick={() => switchCategory(category.id)}>{category.name}</li>
 ```
 
-
 Ambos approach tienen sus ventajas y desventajas. En la primera estamos agregando información que necesitamos en nuestro controlador a la vista lo cual puede no quedar muy prolijo, pero es una estrategia común para los que vienen de otras librerias como `jquery`. Pero en el segundo caso estamos definiendo una nueva función para cada elemento lo cual puede ser un poco innecesario y lento. Elige el que mas haga sentido para vos y continuá.
-
-### Ordenando Productos
 
 Ahora una vez que sabemos cual categoría esta seleccionada (si la hay), podemos decidir filtrar o no filtrar los productos. Simplemente en el lugar donde estamos iterando los productos agrega un `filter` que decida que productos se renderizan y cuales no.
 
 Ademas no te olvides de que ahora el mensaje de Loading tiene que aparecer hasta que tanto los productos y las categorias hayan sido recibidos por la página.
-
-Genial! Si terminaste con esto sigamos un poco más agrega en la grilla la posibilidad de ordenar los productos alfabeticamente, o por precio de mayor a menor o de menor a mayor. Si lo queres hacer con un `<select>` el evento que estas buscando es `onChange`, también lo podés hacer con botones.
 
