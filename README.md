@@ -252,3 +252,5 @@ Ahora una vez que sabemos cual categoría esta seleccionada (si la hay), podemos
 
 Ademas no te olvides de que ahora el mensaje de Loading tiene que aparecer hasta que tanto los productos y las categorias hayan sido recibidos por la página.
 
+
+## Parte 4: Dandole Estilo a nuestra Página
