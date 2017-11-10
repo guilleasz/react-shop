@@ -8,9 +8,6 @@
   },
   "extends": ["airbnb", "plugin:flowtype/recommended"],
   "plugins": ["react", "flowtype"],
-  "settings": {
-    "import/resolver": "webpack"
-  },
   "rules": {
      "no-param-reassign": 0,
 	   "no-underscore-dangle": 0,

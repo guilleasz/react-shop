@@ -1,11 +1,19 @@
 // @flow
-import React from 'react';
+import * as React from 'react';
 import Item from './Item';
 import { type Product } from '../types';
 
-const Grid = ({ products }: { products: Product[] }) => (
+const Grid = ({
+  products,
+  selectedCategory,
+}: {
+  products: Product[],
+  selectedCategory: ?number,
+}) => (
   <div>
-    {products.map(product => <Item key={product.id} product={product} />)}
+    {products
+        .filter(product => !selectedCategory || product.categoryId === selectedCategory)
+        .map(product => <Item key={product.id} product={product} />)}
   </div>
 );
 
