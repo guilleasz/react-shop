@@ -14,10 +14,10 @@ const createCategories = (n) => {
   return Promise.all(categoriesPromises);
 }
 
-const createProduct = (categoryId) => Product.create({
+const createProduct = categoryId => Product.create({
   name: faker.commerce.productName(),
   description: faker.lorem.paragraph(),
-  image: faker.image.image(),
+  image: 'https://source.unsplash.com/random/350x300',
   categoryId,
   availability: !!Math.round(Math.random()),
   price: faker.commerce.price(),
