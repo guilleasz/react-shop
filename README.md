@@ -216,7 +216,9 @@ Viendo las opciones la ideal para nuestro problema va a ser `componentDidMount` 
 
 Ahora solo haz un request a `/products` usando la librería de tu preferencia `fetch`, `axios`, etc... y una vez que tengas los resultados actualiza el estado del componente con el nuevo arreglo de productos usando el método `this.setState`.
 
-También no te olvides de cambiar la inicialización de tu estado con un arreglo de productos vacío. 
+También no te olvides de cambiar la inicialización de tu estado con un arreglo de productos vacío.
+
+Agrega un mensaje de Loading mientras los productos estan siendo fetcheados que desaparezca cuando los productos hayan llegado.
 
 Genial! Ya tenemos nuestra grilla de productos funcionando ahora vayamos a la 3 Parte del proyecto
 
@@ -251,4 +253,7 @@ Ambos approach tienen sus ventajas y desventajas. En la primera estamos agregand
 
 Ahora una vez que sabemos cual categoría esta seleccionada (si la hay), podemos decidir filtrar o no filtrar los productos. Simplemente en el lugar donde estamos iterando los productos agrega un `filter` que decida que productos se renderizan y cuales no.
 
-Genial! Si terminaste con esto sigamos un poco más agrega en la grilla la posibilidad de ordenar los productos alfabeticamente, o por precio de mayor a menor o de menor a mayor. Hazlo de manera parecida a como hicimos lo de las categorías.
+Ademas no te olvides de que ahora el mensaje de Loading tiene que aparecer hasta que tanto los productos y las categorias hayan sido recibidos por la página.
+
+Genial! Si terminaste con esto sigamos un poco más agrega en la grilla la posibilidad de ordenar los productos alfabeticamente, o por precio de mayor a menor o de menor a mayor. Si lo queres hacer con un `<select>` el evento que estas buscando es `onChange`, también lo podés hacer con botones.
+
