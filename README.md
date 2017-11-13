@@ -254,3 +254,51 @@ Ademas no te olvides de que ahora el mensaje de Loading tiene que aparecer hasta
 
 
 ## Parte 4: Dandole Estilo a nuestra Página
+
+### CSS Modules
+
+Para dar estilos a nuestros componentes vamos a usar un _pattern_ llamado __CSS MODULES__. La idea atrás de _css modules_es tener estilos scopeados de manera local, es decir, por cada componente.
+Como sabemos, CSS está hecho para trabajar con estilos globales, por lo tanto vamos a tener que usar algún tipo de convención de nombres para logarr tener estilos locales.
+Justamente, vamos a usar webpack, para preprocesar nuestros archivos `.css`, extrayendo los nombres de las clases que hayamos elegidos y crear nombres locales, usando hashes.
+
+Básicamente, vamos a codear nuestros estilos como haciamos siempre en un archivo separado, que generalmente tiene el mismo nombre que el componente, por ejemplo: `Button.css`.
+
+```css
+/* Button.css */
+.className {
+  color: green;
+}
+```
+
+Ahora, en nuestro Componente, vamos a importar este archivo CSS (podemos importarlo gracias a un loader de webpack que instalaremos), lo que importamos es un objeto donde cada propiedad es una clase del archivo css. Cada valor de esta propiedad es el string con el nombre de la clase cambiado para que sea único:
+```javascript
+import styles from "./Button.css";
+// import { className } from "./Button.css";
+
+element.innerHTML = '<div class="' + styles.className + '">';
+```
+
+#### Webpack
+
+Para lograr este comportamiento vamos a agregar el siguiente Loader en webpack:
+
+```javascript
+const cssLoader = {
+  loader: 'css-loader',
+  options: {
+    modules: true,
+    localIdentName: '[path][name]__[local]--[hash:base64:5]',
+    ignore: '/node_modules/',
+  },
+};
+// agregar a la lista de loaders:
+...
+  {
+    test: /\.css$/,
+    use: [
+      'style-loader',
+      cssLoader,
+    ],
+  }
+...
+```
