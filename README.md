@@ -341,4 +341,6 @@ Listo, ahora ya podemos empezar a usar este patrón!
 Ahora vamos a comenzar a agregar estilos a nuestros componentes: Grid, Item y Sidebar. De tal forma, que creemos un layout de dos columnas, en la columna izquierda estará el Sidebar y en la derecha el Grid.
 Dentro del Grid vamos a posicionar cada Item para que entren uno al lado del otro y se posicionen automáticamente en otra línea cuando no entran mǻs, de tal forma que el Grid sea responsive.
 
+> No te olvides que en javascript la palabra `class` es un keyword reservado, por lo que para agregar una clase a un elemento vamos a usar la propiedad `className` en cambio
+
 
