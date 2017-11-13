@@ -1,6 +1,7 @@
 // @flow
 import React from 'react';
 import { type Category } from '../types';
+import s from './Sidebar.styl';
 
 const Sidebar = ({
   categories,
@@ -9,7 +10,7 @@ const Sidebar = ({
   categories: Category[],
   changeCategory: (selectedCategory: ?number) => void
 }) => (
-  <ul>
+  <ul className={s.sidebar}>
     <li>
       <button onClick={() => changeCategory(null)}>
         All
@@ -17,9 +18,9 @@ const Sidebar = ({
     </li>
     {categories.map(category => (
       <li key={category.id}>
-        <button onClick={() => changeCategory(category.id)}>
+        <h2 onClick={() => changeCategory(category.id)}>
           {category.name}
-        </button>
+        </h2>
       </li>))}
   </ul>
 );

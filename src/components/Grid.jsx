@@ -2,6 +2,7 @@
 import * as React from 'react';
 import Item from './Item';
 import { type Product } from '../types';
+import s from './Grid.css';
 
 const Grid = ({
   products,
@@ -10,7 +11,7 @@ const Grid = ({
   products: Product[],
   selectedCategory: ?number,
 }) => (
-  <div>
+  <div className={s.grid}>
     {products
         .filter(product => !selectedCategory || product.categoryId === selectedCategory)
         .map(product => <Item key={product.id} product={product} />)}

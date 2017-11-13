@@ -271,6 +271,7 @@ Básicamente, vamos a codear nuestros estilos como haciamos siempre en un archiv
 ```
 
 Ahora, en nuestro Componente, vamos a importar este archivo CSS (podemos importarlo gracias a un loader de webpack que instalaremos), lo que importamos es un objeto donde cada propiedad es una clase del archivo css. Cada valor de esta propiedad es el string con el nombre de la clase cambiado para que sea único:
+
 ```javascript
 import styles from "./Button.css";
 // import { className } from "./Button.css";
@@ -302,3 +303,42 @@ const cssLoader = {
   }
 ...
 ```
+
+> Vamos a tener que instalar los loaders: `css-loader` y `style-loader`.
+```bash
+  $ npm install --save-dev css-loader style-loader
+```
+
+#### CSS Preprocessors
+
+También podemos usar el _pattern_ de CSS modules usando un CSS preprocessor. Para eso vamos a tener que instalar el loader específico de ese preprocessor (además del preprocessor en sí).
+
+```bash
+$ npm install --save-dev stylus-loader stylus
+$ npm install --save-dev sass-loader node-sass
+```
+
+Ahora agregamos el nuevo loader a la lista de loaders con la extensión que queremos que matchee:
+
+```javascript
+// ejemplo para stylus
+...
+  {
+    test: /\.styl$/,
+    use: [
+      'style-loader',
+      cssLoader,
+      'stylus-loader',
+    ],
+  }
+```
+
+> La parte de importar las clases en un objeto se mantiene igual!
+
+
+Listo, ahora ya podemos empezar a usar este patrón!
+
+Ahora vamos a comenzar a agregar estilos a nuestros componentes: Grid, Item y Sidebar. De tal forma, que creemos un layout de dos columnas, en la columna izquierda estará el Sidebar y en la derecha el Grid.
+Dentro del Grid vamos a posicionar cada Item para que entren uno al lado del otro y se posicionen automáticamente en otra línea cuando no entran mǻs, de tal forma que el Grid sea responsive.
+
+

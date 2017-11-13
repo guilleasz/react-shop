@@ -4,6 +4,7 @@ import axios, { type $AxiosXHR } from 'axios';
 import Grid from '../components/Grid';
 import Sidebar from '../components/Sidebar';
 import { type Product, type Category } from '../types';
+import s from './App.css';
 
 type Props = {};
 
@@ -50,10 +51,14 @@ export default class App extends React.Component<Props, State> {
       this.state.loading ?
         <div>Loading...</div>
         :
-        <div>
+      <div className={s.layout}>
+         <div>
           <Sidebar categories={this.state.categories} changeCategory={this.changeCategory} />
+        </div>
+        <div>
           <Grid products={this.state.products} selectedCategory={this.state.selectedCategory} />
         </div>
+      </div>
     );
   }
 }

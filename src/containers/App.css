@@ -1,0 +1,9 @@
+.layout > div:first-child{
+  float: left;
+  width: 8%;
+}
+
+.layout > div:last-child {
+  float: left;
+  width: 92%;
+}
