@@ -7,6 +7,6 @@
 [lints]
 
 [options]
-extensions=.styl
+module.file_ext=.styl
 
 [strict]
