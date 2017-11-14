@@ -1,14 +1,19 @@
 // @flow
+/* eslint-disable jsx-a11y/click-events-have-key-events,
+jsx-a11y/no-noninteractive-element-interactions */
 import React from 'react';
-import { type Category } from '../types';
+import { type Category, type Product } from '../types';
 import s from './Sidebar.styl';
+import AddProduct from '../containers/AddProduct';
 
 const Sidebar = ({
   categories,
   changeCategory,
+  addProduct,
 }: {
   categories: Category[],
-  changeCategory: (selectedCategory: ?number) => void
+  changeCategory: (selectedCategory: ?number) => void,
+  addProduct: (product: Product) => void,
 }) => (
   <ul className={s.sidebar}>
     <li>
@@ -22,6 +27,7 @@ const Sidebar = ({
           {category.name}
         </h2>
       </li>))}
+    <AddProduct addProduct={addProduct} categories={categories} />
   </ul>
 );
 

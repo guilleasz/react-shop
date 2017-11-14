@@ -343,4 +343,26 @@ Dentro del Grid vamos a posicionar cada Item para que entren uno al lado del otr
 
 > No te olvides que en JavaScript la palabra `class` es un keyword reservado, por lo que para agregar una clase a un elemento vamos a usar la propiedad `className` en cambio
 
+## Parte 5: Formularios
 
+### Agreguemos Productos
+
+Creemos un Formulario en el SideBar el cual nos sirva para agregar productos. Vamos a hacer un componente controlado el cual sea un contenedor con el estado del formulario que este actualizado con los valores del mismo. Recuerda de utilizar los metodos `onChange` para actualizar los valores cada vez que el input cambia, y `onSubmit` para cuando envíes el formulario. También no te olvides de pasarle a los input como prop `value` el valor en el estado. 
+
+Para enviar el formulario correctamente vas a necesitar enviar el `name` (string), una `description` (string, opcional), `price`(string), `availability`(booleano, opcional), `image`(string, opcional), y un categoryId(Id de una categoría).
+
+Tienes que tener un par de cosas en cuenta
+
+1. El price tiene que tener un formato 00.00 en el cual los primeros numeros puede haber x cantidad, y los centavos solo dos, y si o si tienen que ser numeros, si no es así la base de datos fallará, asi que agregá un validation en el formulario.
+1. El categoryId debería ser seleccionado de las categorías existentes así que usa un `<select>` para que el usuario pueda seleccionarlo facilmente.
+
+**El endpoint para enviar el producto es `POST /products`.**
+
+
+### Recibiendo el nuevo producto
+
+Una vez que el formulario envia correctamente el producto nuestro endpoint va a responder con el nuevo producto creado, agregalo al arreglo de productos en el estado para que aparezca automáticamente una vez que fue agregado dentro del catalogo.
+
+Quizas tengas que pasarle un método que tenga que correr una vez que el `onSubmit` recibe el nuevo producto creado.
+
+Si cuando agregas un producto este aparece en el catalógo creado correctamente seguramente este todo creado correctamente. 

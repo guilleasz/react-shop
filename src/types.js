@@ -1,10 +1,12 @@
 // @flow
 export type Product = {
   name: string,
-  id: number,
+  id?: number,
   price: string,
   image: string,
-  categoryId: number,
+  categoryId: ?number,
+  availability: boolean,
+  description: string,
 };
 
 export type Category = {

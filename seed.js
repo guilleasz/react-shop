@@ -44,9 +44,9 @@ const createCart = (n, products) => {
     cartItemPromises.push(createCartItem(productId));
   }
   return Promise.all(cartItemPromises);
-}
+};
 
-const generateShop = (nCat, nProd, nCart) => 
+const generateShop = (nCat, nProd, nCart) =>
   db.sync({ force: true })
     .then(() => createCategories(nCat))
     .then(categories => createCatalogue(nProd, categories))

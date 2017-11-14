@@ -46,19 +46,29 @@ export default class App extends React.Component<Props, State> {
     });
   }
 
+  addProduct = (product: Product) => {
+    this.setState({
+      products: [product, ...this.state.products],
+    });
+  }
+
   render() {
     return (
       this.state.loading ?
         <div>Loading...</div>
         :
-      <div className={s.layout}>
-         <div>
-          <Sidebar categories={this.state.categories} changeCategory={this.changeCategory} />
+        <div className={s.layout}>
+          <div>
+            <Sidebar
+              addProduct={this.addProduct}
+              categories={this.state.categories}
+              changeCategory={this.changeCategory}
+            />
+          </div>
+          <div>
+            <Grid products={this.state.products} selectedCategory={this.state.selectedCategory} />
+          </div>
         </div>
-        <div>
-          <Grid products={this.state.products} selectedCategory={this.state.selectedCategory} />
-        </div>
-      </div>
     );
   }
 }
