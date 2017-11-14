@@ -28,12 +28,14 @@ module.exports = {
         test: /\.css$/,
         use: [
           'style-loader',
+          'css-modules-flow-types-loader',
           cssLoader,
         ],
       }, {
         test: /\.styl$/,
         use: [
           'style-loader',
+          'css-modules-flow-types-loader',
           cssLoader,
           'stylus-loader',
         ],
