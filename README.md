@@ -387,6 +387,7 @@ Lo que vamos a hacer es:
 - Nuestros productos se van a mostrar en `/products`
 - Cada filtro de categoría va generar URLSearchParam ej: `/products?category=2`
 - También vamos a crear una nueva vista para el producto individual `/products/2`
+- Finalmente, vamos a tener una ruta 404 que maneje todas las rutas que no existen
 
 Para empezar tenemos que instalar dos librerías:
 
