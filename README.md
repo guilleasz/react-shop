@@ -10,7 +10,15 @@ Para esto vamos a ir paso a paso viendo todas las caracteristicas de React, yend
 
 ### Estructura del trabajo
 
-El Proyecto va estar separado en X Partes estas serán:
+El Proyecto va estar separado en 8 Partes, estas serán:
+
+- Parte 1: Empezando de Cero
+- Parte 2: Catalogo de Productos
+- Parte 3: Categorias
+- Parte 4: Dandole Estilo a nuestra Página
+- Parte 5: Formularios
+- Parte 6: Navegando en nuestro E-commerce
+
 
 ## Parte 1: Empezando de Cero
 
@@ -368,7 +376,7 @@ Quizas tengas que pasarle un método que tenga que correr una vez que el `onSubm
 Si cuando agregas un producto este aparece en el catalógo creado correctamente seguramente este todo creado correctamente. 
 
 
-## Parte 5: Navegando en nuestro E-commerce
+## Parte 6: Navegando en nuestro E-commerce
 
 ### React Router
 
@@ -430,6 +438,14 @@ Ahora crea una nueva ruta que vaya a `/products/:id` que renderize un nuevo comp
 
 Ahora solo crea el componente con la vista para mostrar la imagen del producto, su nombre, la descripcion el precio y un mensaje de Available o Out of Stock dependiendo del booleano de Availability.
 
-Ahora usemos los props del router para hacer un boton par ir para atras usando el metodo `goBack` que viene en history. 
+Ahora usemos los props del router para hacer un boton par ir para atras usando el metodo `goBack` que viene en history.
+
+### Rutas 404
+
+Ahora manejemos rutas que no existen. Creemos una ruta al final de nuestro Switch que no tenga path y renderice un mensaje de error 404. Ahora cualquier ruta inexistente que pongamos en nuestra URL nos va a llevar a esta vista.
+
+Usemos esto que acabamos de crear para que sirva también cuando ponemos en la URL un id de un producto que no existe. En el componente del producto individual si no llegará a recibir un producto redirigí usando `Redirect` a la ruta `/NotFound`.
+
+> No es necesario definir `/NotFound` ya que nuestro error handler va a capturar todas las rutas no definidas.
 
 
