@@ -5,7 +5,7 @@ module.exports = router;
 
 router.get('/', (req, res, next) => {
   Cart.findAll({
-    include: [Product]
+    include: [Product],
   })
     .then(res.send.bind(res))
     .catch(next);

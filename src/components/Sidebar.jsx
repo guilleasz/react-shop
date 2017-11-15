@@ -35,6 +35,9 @@ const Sidebar = ({
       <li key={category.id}>
         <ActiveLink to={`/products?category=${category.id}`} label={category.name} />
       </li>))}
+    <li>
+      <ActiveLink to="/cart" label="Cart" />
+    </li>
     <AddProduct addProduct={addProduct} categories={categories} />
   </ul>
 );

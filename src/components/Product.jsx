@@ -4,7 +4,15 @@ import { type RouterHistory, Redirect } from 'react-router';
 import { type Product as ProductType } from '../types';
 import s from './Product.styl';
 
-const Product = ({ product, history }: { product: ProductType, history: RouterHistory }) => (
+const Product = ({
+  product,
+  history,
+  addProductToCart,
+}: {
+  product: ProductType,
+  history: RouterHistory,
+  addProductToCart: () => void,
+}) => (
   product ?
     <div>
       <div className={s.image}>
@@ -16,6 +24,7 @@ const Product = ({ product, history }: { product: ProductType, history: RouterHi
         <div>${product.price}</div>
         <div>{product.availability ? 'Available' : 'Out of Stock'}</div>
         <button onClick={history.goBack}>Go Back</button>
+        <button onClick={addProductToCart}>Add to Cart</button>
       </div>
     </div>
     :
