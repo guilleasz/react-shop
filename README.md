@@ -366,3 +366,70 @@ Una vez que el formulario envia correctamente el producto nuestro endpoint va a 
 Quizas tengas que pasarle un método que tenga que correr una vez que el `onSubmit` recibe el nuevo producto creado.
 
 Si cuando agregas un producto este aparece en el catalógo creado correctamente seguramente este todo creado correctamente. 
+
+
+## Parte 5: Navegando en nuestro E-commerce
+
+### React Router
+
+Un Single Page Application de verdad nos permitiría poder navegar por nuestra aplicación generando URL dinamicas que nos permitan recordar la vista que corresponde para esa URL específica.
+
+Lo que vamos a hacer es:
+
+- Nuestros productos se van a mostrar en `/products`
+- Cada filtro de categoría va generar URLSearchParam ej: `/products?category=2`
+- También vamos a crear una nueva vista para el producto individual `/products/2`
+
+Para empezar tenemos que instalar dos librerías:
+
+```js
+$ npm install --save react-router react-router-dom
+```
+
+No te olvides de volver a correr `flow-typed install` para instalar las definiciones de ambas librerías. Vamos a poder usar anotaciones como: 
+ 
+- `ContextRouter`
+- `Match`
+- `Location`
+- `History`
+- entre otros...
+
+Ahora vamos a requerir `BrowserRouter` en `index.js` y lo vamos a colocar alrededor de nuestro componente `App`.
+
+Ya tenemos la configuración básica de nuestro Router.
+
+### Ruta /products
+
+Ahora lo que vamos a hacer es que la `Route` con `path="/products"` renderice nuestro componente `Grid`. El `SideBar` lo vamos a mantener para cualquier ruta.
+
+Tenemos un pequeño problema, no podemos pasar el componente directamente a la prop `component` que `Grid` toma props, por lo que vamos a tener q user `render`. Que tome una función que devuelva nuestro componente `Grid` con sus props correspondiente. 
+
+También no te olvides que `render` envia como props a la función el contexto del router, un objeto con las propiedades: `match`, `history` y `location`. Seguramente utilizaremos estas propiedades así que tambien pasaselas. Una buena forma de pasar todas las props que entra en la función es usando el spread operator: `<Grid {...props} />
+
+Si todo funciona bien agreguemos un poco más de picante. Entrar a `/products` para ver algo es muy específico, si nuestro usuario entra a la página principal no vería nada. Agreguemos un `Redirect` que vaya de `/` a `/products`.
+
+No tan rápido, la ruta `/products` matchea ambas rutas `/` y `/products` por lo que si entramos a `/products` redirigiríamos a `/products` y esto rompería nuestro código. Para evitar esto tenemos que poner un `Switch` alrededor de nuestras rutas, para que solo matchie la primera coincidencia. Por lo que el orden importa, ¿cuál debería ir primero el `Route` o el `Redirect`? 
+
+### Ruta /products?category=1
+
+Ahora trabajemos con un search query. Dado que react no quería dar una pocision opinionada de como tratar los search queries, no nos da ningún tipo de parser para interpretarnos. Por suerte hoy en día los browsers vienen con la API URLSearchParams que nos permite parsearlos.
+
+Para hacer esta ruta funcionar vamos a tener que cambiar la lógica de nuestro código. La categoría seleccionada ya no va a estar en el estado sino que va a estar en nuestro URL. Por lo que ahora donde pasabas el id de la categoría vas a tener que usar `URLSearchParams` y `props.location.search` para tomar el valor del query.
+
+Fijate si harcodeando el url con el id de la categoria el filtro sigue funcionando, una vez que eso funcione vamos a borrar la función que usabamos para seleccionar la categoría ya que no la vamos a usar más. Sino que vamos a usar un `Link` en nuestro sidebar que apunte a la ruta correspondiente.
+
+Si todo sigue funcionando, vamos a mejorar aún más! Entra a la hoja de estilo de tu sidebar y agregá una clase `active` esta la vamos a usar para decir si un link esta activo o no. 
+
+Mira [este ejemplo](https://reacttraining.com/react-router/web/example/custom-link) en la documentación de React Router para ver como podríamos lograr esto. Algo que vas a tener en cuenta es que `Route` no va a activarse con query params, por lo que el objeto match no va a aparecer. Por lo que vas a tener que comparar la `location.pathname + location.search` con la ubicación de tu link para saber si debería estar activo o no.
+
+### Ruta /products/:id
+
+Ahora hagamos una vista para cada producto individual. En cada Item de la lista ponlo dentro de un link que dirija a la ruta específica con su id. Recuerda que podemos usar `match.url` para formar las rutas.
+
+Ahora crea una nueva ruta que vaya a `/products/:id` que renderize un nuevo componente donde vamos a poner al Producto. Este producto debería tomar como prop el Producto específico, podes usar un find en el arreglo products de nuestro estado, usando el `match.params.id` para encontrarlo. Otra posibilidad seria hacer un nuevo contenedor que cuando carge vaya al servidor a buscar el producto específico, ambas soluciones son validas.
+
+Ahora solo crea el componente con la vista para mostrar la imagen del producto, su nombre, la descripcion el precio y un mensaje de Available o Out of Stock dependiendo del booleano de Availability.
+
+Ahora usemos los props del router para hacer un boton par ir para atras usando el metodo `goBack` que viene en history. 
+
+
