@@ -25,7 +25,7 @@ export default class Cart extends React.Component<Props, State> {
     return (
       <ul>
         {this.state.cartItems.map(cartItem =>
-          <li>Name: {cartItem.product.name} Quantity: {cartItem.quantity}</li>)}
+          <li key={cartItem.id}>Name: {cartItem.product.name} Quantity: {cartItem.quantity}</li>)}
       </ul>
     );
   }
