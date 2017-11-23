@@ -449,11 +449,3 @@ Ahora manejemos rutas que no existen. Creemos una ruta al final de nuestro Switc
 Usemos esto que acabamos de crear para que sirva también cuando ponemos en la URL un id de un producto que no existe. En el componente del producto individual si no llegará a recibir un producto redirigí usando `Redirect` a la ruta `/NotFound`.
 
 > No es necesario definir `/NotFound` ya que nuestro error handler va a capturar todas las rutas no definidas.
-
-### Ruta /cart
-
-Esta ruta va ser un poco mas compleja, para este caso, vamos a crear un contenedor con estado propio que fetchie el cart de la api a `/cart`. Crea la ruta para el cart y genera el componente que cuando se monte vaya a buscar los productos, el resultado va a hacer un arreglo de este objeto `{ quantity: number, product: Product, id: number }` Una vez que logres mostrar los objetos, por lo menos por su nombre y la cantidad comprada, vamos a añadir la funcionalidad de agregar productos al carrito.
-
-En `App` vamos a crear una función que sea añadir a carrito que haga un `POST /cart` a nuestra api enviando un objeto con el `productId`, pasá esa función como prop del producto y hace que la ejecute en un botón _Add To Cart_. No te olvides de pasarle el id del producto a la función.
-
-Finalmente agrega un link en el Sidebar para ir al cart, también tiene que estar activo como las categorías.
