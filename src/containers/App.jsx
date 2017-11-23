@@ -29,13 +29,13 @@ export default class App extends React.Component<Props, State> {
   }
 
   fetchProducts() {
-    return axios.get('/products')
+    return axios.get('http://develop.plataforma5.la:3000/api/products')
       .then((res: $AxiosXHR<Product[]>) => res.data)
       .then((products: Product[]) => this.setState({ products }));
   }
 
   fetchCategories() {
-    return axios.get('/categories')
+    return axios.get('http://develop.plataforma5.la:3000/api/categories')
       .then((res: $AxiosXHR<Category[]>) => res.data)
       .then((categories: Category[]) => this.setState({ categories }));
   }
