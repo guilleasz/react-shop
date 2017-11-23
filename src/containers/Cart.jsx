@@ -16,7 +16,7 @@ export default class Cart extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    axios.get('/api/cart')
+    axios.get('http://develop.plataforma5.la:3000/api/cart')
       .then((res: $AxiosXHR<CartItem[]>) => res.data)
       .then(cartItems => this.setState({ cartItems }));
   }

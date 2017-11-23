@@ -30,13 +30,13 @@ export default class App extends React.Component<Props, State> {
   }
 
   fetchProducts() {
-    return axios.get('/api/products')
+    return axios.get('http://develop.plataforma5.la:3000/api/products')
       .then((res: $AxiosXHR<Product[]>) => res.data)
       .then((products: Product[]) => this.setState({ products }));
   }
 
   fetchCategories() {
-    return axios.get('/api/categories')
+    return axios.get('http://develop.plataforma5.la:3000/api/categories')
       .then((res: $AxiosXHR<Category[]>) => res.data)
       .then((categories: Category[]) => this.setState({ categories }));
   }
@@ -48,7 +48,7 @@ export default class App extends React.Component<Props, State> {
   }
 
   addProductToCart = (productId: ?string) => {
-    axios.post('/api/cart/', { productId });
+    axios.post('http://develop.plataforma5.la:3000/api/cart/', { productId });
   }
 
   render() {
