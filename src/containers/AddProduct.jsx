@@ -38,7 +38,7 @@ export default class AddProduct extends React.Component<Props, State> {
         priceError: true,
       });
     }
-    return axios.post('/products', this.state)
+    return axios.post('http://develop.plataforma5.la:3000/api/products', this.state)
       .then((res: $AxiosXHR<Product>) => res.data)
       .then(this.props.addProduct)
       .then(() => {
