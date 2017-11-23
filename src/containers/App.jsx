@@ -5,7 +5,6 @@ import { Route, Redirect, Switch, type ContextRouter } from 'react-router';
 import Grid from '../components/Grid';
 import Sidebar from '../components/Sidebar';
 import ProductComponent from '../components/Product';
-import Cart from './Cart';
 import { type Product, type Category } from '../types';
 import s from './App.css';
 
@@ -47,10 +46,6 @@ export default class App extends React.Component<Props, State> {
     });
   }
 
-  addProductToCart = (productId: ?string) => {
-    axios.post('http://develop.plataforma5.la:3000/api/cart/', { productId });
-  }
-
   render() {
     return (
       this.state.loading ?
@@ -83,13 +78,8 @@ export default class App extends React.Component<Props, State> {
                     {...props}
                     product={this.state.products.find(product =>
                       String(product.id) === props.match.params.id)}
-                    addProductToCart={() => this.addProductToCart(props.match.params.id)}
                   />
                 )}
-              />
-              <Route
-                path="/cart"
-                component={Cart}
               />
               <Redirect exact from="/" to="/products" />
               <Route render={() => <div>Page Not Found</div>} />
