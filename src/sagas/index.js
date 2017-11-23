@@ -23,6 +23,7 @@ const getAllCategoriesAPI = () => axios.get(`${host}/api/categories`, {
       throw err;
     });
 
+// nuestro Saga: este realizará la accion asincrónica
 export function* getAllProductsAndCategories() {
   const products = yield call(getAllProductsAPI);
   const categories = yield call(getAllCategoriesAPI);
@@ -32,11 +33,8 @@ export function* getAllProductsAndCategories() {
   ];
 }
 
+// El watcher Saga: va a invocar a getAllProductsAndCategories en cada GET_PRODUCTS
 export function* watchGetProducts() {
-  /*
-    takeEvery will fork a new `getAllProducts` task on each GET_ALL_PRODUCTS actions
-    i.e. concurrent GET_ALL_PRODUCTS actions are allowed
-  */
   yield takeEvery(GET_PRODUCTS, getAllProductsAndCategories);
 }
 

@@ -482,7 +482,7 @@ Ahora vamos a agregar una serie de carpetas nuevas para alojar el código necesa
 Primero vamos a conectar `redux` en nuestra app, para hacerlo necesitamos:
 
 * Definir las `acciones` y los `reducers`.
-* Crear un Store. 
+* Crear un Store.
 * Wrapear nuestra APP con el Provider y pasarle el store.
 * Conectar al provider algún container.
 
@@ -493,10 +493,12 @@ Definamos las acciones que vamos a necesitar en nuestra app, vamos a implementar
 * 'GET_PRODUCTS': Envia un request por todos los productos.
 * 'RECEIVE_PRODUCTS': Recibe todos los productos.
 * 'RECEIVE_CATEGORIES': Recibe todos las categorías.
-* 'ADD_TO_CART': Envia un request para agregar un producto al carrito.
-* 'REMOVE_FROM_CART': Envia un request para sacar un producto del carrito.
-* 'CHANGE_QUANTITY': Envia un request para cambiar la cantidad de un producto en el carrito.
-* 'RECEIVE_CART': Recibe el carrito.
+* 'ADD_TO_CART': Agrega un producto al carrito.
+* 'REMOVE_FROM_CART': Saca un producto del carrito.
+* 'CHANGE_QUANTITY': Cambia la cantidad de un producto en el carrito.
+* 'CHECKOUT_REQUEST': Envia un Request para procesar la compra.
+* 'CHECKOUT_SUCCESS': Indica que la compra se realizó con éxito.
+* 'CHECKOUT_FAILURE': Indica que hubo un error en la compra.
 
 ```javascript
 // actions/index.js
@@ -534,10 +536,10 @@ store = {
     isLoading: bool, // booleano para indicar si esta fetcheando o no
     categories: [] // las categorias
   },
-  cart: {
-    productId: string, // id del producto
-    quantity: number, // cantidad de ese producto
-  }
+  cart: 
+    items: [],
+    isLoading: bool,
+    error: null, // flag que nos indica si hubo un error cuando hicimos la compra.
 }
 
 ```
@@ -549,6 +551,12 @@ En este vamos a agrupar todas las acciones que tengan que ver con los productos 
 ```javascript
 // reducers/products.js
 import { GET_PRODUCTS, RECEIVE_PRODUCTS, RECEIVE_CATEGORIES, GET_CATEGORIES } from '../actions';
+
+initialState = {
+  items: [],
+  categories: [], 
+  isLoading: false,
+};
 
 function products(state = { items: [], isLoading: false, categories: [] }, action) {
   
@@ -574,35 +582,41 @@ En este reducer vamos a agrupar las acciones del carrito:
 
 ```javascript
 // reducers/cart.js
+import { ADD_TO_CART, REMOVE_FROM_CART, CHANGE_QUANTITY, CHECKOUT_REQUEST, CHECKOUT_SUCCESS, CHECKOUT_FAILURE  } from '../actions'
 
-import { combineReducers } from 'redux';
-import { ADD_TO_CART, REMOVE_FROM_CART, CHANGE_QUANTITY,  } from '../actions'
+const initialState = {
+  items: [],
+  error: null,
+  isLoading: false,
+};
 
-function cart(state = [], action) {
-  const elem = state.cart.findIndex(elem => elem.productId === action.productId);
+function cart(state = initialState, action) {
+  const elem = state.items.findIndex(elem => elem.productId === action.productId);
   switch (action.type) {
     case ADD_TO_CART:
       if(elem === -1) {
         return {
           ...state,
-          cart: [...state.cart, {
+          cart: [...state.items, {
             productId: action.productId,
             quantity: 1,
           }],
         };
       }
       return {
-        cart: [...state.cart.slice(0, elem),
+        cart: [...state.items.slice(0, elem),
           {
             productId: action.productId,
-            quantity: state.cart[elem].quantity + 1,
+            quantity: state.items[elem].quantity + 1,
           },
-          ...state.cart.slice(elem),
+          ...state.items.slice(elem),
         ],
       }
-      ...
+    ...
+
+    ...
     default:
-      return state
+      return state; 
   }
 }
 
@@ -617,7 +631,7 @@ Por último vamos a combinar los dos reducers en un único reducer, para eso usa
 // reducers/index.js
 
 import { combineReducers } from 'redux';
-import cart from './products';
+import cart from './cart';
 import products from './products';
 
 const rootReducer = combineReducers({
@@ -630,7 +644,7 @@ export default rootReducer;
 
 ### Creando el Store
 
-En el archivo `index.js` vamos a importar el componente __Provider__ de `react-redux` y las funcion __createStore__ de `redux`, junto con el  `rootReducer` que creamos recién:
+En el archivo `index.js` vamos a importar el componente __Provider__ de `react-redux` y las función __createStore__ de `redux`, junto con el  `rootReducer` que creamos recién:
 
 ```javascript
 import { Provider } from 'react-redux';
@@ -639,6 +653,7 @@ import rootReducer from './reducers';
 
 const store = createStore(
   rootReducer,
+  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(), // magia para que funcione la extensión de redux del google Chrome.
 );
 
 const appDiv = document.getElementById('app');
@@ -653,24 +668,31 @@ if (appDiv) render(
 
 ### Conectado un Container al Provider
 
+#### Cart.jsx
+
+#### App.jsx
+
 Ahora, vamos a importar la función `connect` de redux en nuestro container `App.jsx` para poder _conectarlo_ al store a través del `Provider`:
 
 ```javascript
 // containers/App.jsx
 ...
+
 import { connect } from 'react-redux';
+
 ...
+
 const mapStateToProps = state => {
   return {
     products: state.products.items,
-    loading: state.products.isLoading,
     categories: state.products.categories,
+    loading: state.products.isLoading,
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    getProducts: () => dispatch(getAllProducts()),
+    getProductsAndCategories: () => dispatch(getAllProductsAndCategories()),
   };
 }
 
@@ -679,6 +701,13 @@ export default connect(mapStateToProps, mapDispatchToProps)(App); // exportamos 
 ```
 
 ### Disparando las acciones
+
+Ahora tienen que refactorear el hook `componentDidMount` para que en el mismo se disparen las acciones:
+  * GET_PRODUCTS.
+  * GET_CATEGORIES.
+Y cuando se obtengan los datos del fetch (en el `then` de axios), disparen las acciones:
+* RECEIVE_PRODUCTS.
+* RECEIVE_CATEGORIES.
 
 ### Conectando `redux` y `saga` a React
 

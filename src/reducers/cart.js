@@ -1,56 +1,40 @@
-import { ADD_TO_CART, REMOVE_FROM_CART, CHANGE_QUANTITY,  } from '../actions'
+import { ADD_TO_CART, REMOVE_FROM_CART } from '../actions'
 
-//
-// state = {
-//    cart: [ {
-//      productId: string,
-//      quantity: number
-//    }]
-// }
-//
+const initialState = {
+  items: [],
+  error: null,
+  isLoading: false,
+};
 
-function cart(state = [], action) {
-  const elem = state.cart.findIndex(elem => elem.productId === action.productId);
+function cart(state = initialState, action) {
+  const elem = state.items.findIndex(elem => elem.product.id === action.product.id);
   switch (action.type) {
     case ADD_TO_CART:
       if(elem === -1) {
         return {
           ...state,
-          cart: [...state.cart, {
-            productId: action.productId,
+          cart: [...state.items, {
+            product: action.product,
             quantity: 1,
           }],
         };
       }
       return {
-        cart: [...state.cart.slice(0, elem),
+        cart: [...state.items.slice(0, elem),
           {
-            productId: action.productId,
-            quantity: state.cart[elem].quantity + 1,
+            product: action.product,
+            quantity: state.items[elem].quantity + 1,
           },
-          ...state.cart.slice(elem),
-        ],
-      }
-    case CHANGE_QUANTITY:
-      return {
-        cart: [ ...state.cart.slice(0, elem),
-          {
-            productId: action.productId,
-            quantity: action.quantity,
-          },
-          ...state.cart.slice(elem),
+          ...state.items.slice(elem),
         ],
       }
     case REMOVE_FROM_CART:
-      if(elem === -1){
-        return state;
-      }
       return {
         ...state,
-        cart: [...state.cart.slice(0, elem), ...state.cart.slice(elem)],
+        cart: [...state.items.slice(0, action.index), ...state.items.slice(action.index)],
       }
     default:
-      return state
+      return state; 
   }
 }
 

@@ -1,6 +1,6 @@
 // @flow
 import React from 'react';
-import { connect } from 'react-redux'
+import { connect } from 'react-redux';
 import axios, { type $AxiosXHR } from 'axios';
 import { Route, Redirect, Switch, type ContextRouter } from 'react-router';
 import Grid from '../components/Grid';
@@ -9,7 +9,9 @@ import ProductComponent from '../components/Product';
 import Cart from './Cart';
 import { type Product, type Category } from '../types';
 import s from './App.css';
-import { getAllProducts } from '../actions/index.js';
+import { getAllProducts, getAllCategories, receiveCategories, receiveProducts, addToCart } from '../actions/index.js';
+
+const url = 'http://develop.plataforma5.la:3000/api/';
 
 type Props = {};
 
@@ -30,6 +32,10 @@ const mapStateToProps = state => {
 function mapDispatchToProps(dispatch) {
   return {
     getProducts: () => dispatch(getAllProducts()),
+    getCategories: () => dispatch(getAllCategories()),
+    receiveProducts: (products) => dispatch(receiveProducts(products)),
+    receiveCategories: (categories) => dispatch(receiveCategories(categories)),
+    addToCart: (product) => dispatch(addToCart(product)),
   };
 }
 
@@ -37,18 +43,12 @@ class App extends React.Component<Props, State> {
 
   componentDidMount() {
     this.props.getProducts();
-    // Promise.all([this.fetchCategories()])
-    //   .then(() => this.setState({ loading: false }));
-  }
-
-  addProduct = (product: Product) => {
-    this.setState({
-      products: [product, ...this.state.products],
-    });
-  }
-
-  addProductToCart = (productId: ?string) => {
-    axios.post('/api/cart/', { productId });
+    this.props.getCategories();
+    Promise.all([axios.get(`${url}/products`), axios.get(`${url}/categories`)])
+      .then(([products, categories]) => {
+        this.props.receiveProducts(products.data);
+        this.props.receiveCategories(categories.data);
+      });
   }
 
   render() {
@@ -83,7 +83,7 @@ class App extends React.Component<Props, State> {
                     {...props}
                     product={this.props.products.find(product =>
                       String(product.id) === props.match.params.id)}
-                    addProductToCart={() => this.addProductToCart(props.match.params.id)}
+                    addProductToCart={() => this.addToCart(product)}
                   />
                 )}
               />

@@ -1,7 +1,12 @@
 import { GET_PRODUCTS, RECEIVE_PRODUCTS, RECEIVE_CATEGORIES, GET_CATEGORIES } from '../actions';
 
+const initialState = {
+  items: [],
+  categories: [], 
+  isLoading: false,
+};
 
-function products(state = { items: [], isLoading: false, categories: [] }, action) {
+function products(state = initialState, action) {
   
   switch (action.type) {
     case GET_PRODUCTS:

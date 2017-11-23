@@ -23,3 +23,8 @@ router.put('/:id', (req, res, next) => {
     .then(res.send.bind(res))
     .catch(next);
 });
+
+router.post('/checkout', (req, res, next) => {
+  if(req.body.cart.lenght <= 1) return res.status(200);
+  return res.status(500);
+});
