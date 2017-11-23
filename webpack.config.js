@@ -23,7 +23,13 @@ module.exports = {
         test: /(\.js|\.jsx)$/,
         loader: 'babel-loader',
         exclude: /node_modules/,
-        query: { presets: ['env', 'stage-0', 'react'] },
+        query: {  "presets": [
+    ["env", {
+      "targets": { node: "6" }, // specify targets here
+    }],
+    "stage-0",
+    "react"
+  ] },
       }, {
         test: /\.css$/,
         use: [

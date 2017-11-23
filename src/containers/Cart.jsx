@@ -10,11 +10,14 @@ type State = {
   cartItems: CartItem[],
 };
 
-export default class Cart extends React.Component<Props, State> {
-  state = {
-    cartItems: [],
+const mapStateToProps = state => {
+  return {
+    cartItems: state.cart
   }
+}
 
+
+export default class Cart extends React.Component<Props, State> {
   componentDidMount() {
     axios.get('/api/cart')
       .then((res: $AxiosXHR<CartItem[]>) => res.data)
@@ -24,7 +27,7 @@ export default class Cart extends React.Component<Props, State> {
   render() {
     return (
       <ul>
-        {this.state.cartItems.map(cartItem =>
+        {this.props.cartItems.map(cartItem =>
           <li key={cartItem.id}>Name: {cartItem.product.name} Quantity: {cartItem.quantity}</li>)}
       </ul>
     );

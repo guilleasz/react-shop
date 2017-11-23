@@ -457,3 +457,267 @@ Esta ruta va ser un poco mas compleja, para este caso, vamos a crear un contened
 En `App` vamos a crear una función que sea añadir a carrito que haga un `POST /cart` a nuestra api enviando un objeto con el `productId`, pasá esa función como prop del producto y hace que la ejecute en un botón _Add To Cart_. No te olvides de pasarle el id del producto a la función.
 
 Finalmente agrega un link en el Sidebar para ir al cart, también tiene que estar activo como las categorías.
+
+## Parte 7: Redux-Saga
+
+Ahora vamos a agregar el patrón redux a nuestra app y lo vamos a implementar con Redux-Saga.
+
+Empezamos instalando `redux-saga` en el proyecto, junto con `redux` y `react-redux`:
+
+```bash
+$ npm install --save-dev redux-saga redux react-redux
+```
+
+Ahora vamos a agregar una serie de carpetas nuevas para alojar el código necesario de `redux-saga`: acciones, reducers y sagas/
+
+```
+-
+|-- actions
+|-- reducers
+|-- sagas
+```
+
+### Conectando `redux`
+
+Primero vamos a conectar `redux` en nuestra app, para hacerlo necesitamos:
+
+* Definir las `acciones` y los `reducers`.
+* Crear un Store. 
+* Wrapear nuestra APP con el Provider y pasarle el store.
+* Conectar al provider algún container.
+
+### Acciones
+
+Definamos las acciones que vamos a necesitar en nuestra app, vamos a implementarlas junto con sus actions creators en la carpeta `actions`, en un archivo que podemos llamar `index.js`:
+
+* 'GET_PRODUCTS': Envia un request por todos los productos.
+* 'RECEIVE_PRODUCTS': Recibe todos los productos.
+* 'RECEIVE_CATEGORIES': Recibe todos las categorías.
+* 'ADD_TO_CART': Envia un request para agregar un producto al carrito.
+* 'REMOVE_FROM_CART': Envia un request para sacar un producto del carrito.
+* 'CHANGE_QUANTITY': Envia un request para cambiar la cantidad de un producto en el carrito.
+* 'RECEIVE_CART': Recibe el carrito.
+
+```javascript
+// actions/index.js
+// acciones:
+export const GET_PRODUCTS = 'GET_PRODUCTS';
+export const RECEIVE_PRODUCTS = 'RECEIVE_PRODUCTS';
+...
+
+// actions creators
+export function getAllProducts() {
+  return {
+    type: GET_PRODUCTS
+  }
+}
+
+export function receiveProducts(products) {
+  return {
+    type: RECEIVE_PRODUCTS,
+    products: products
+  }
+}
+...
+```
+
+### Reducers
+
+En los reducers vamos a definir cómo afectan al estado las acciones previamente definidas. Vamos a crear dos reducers y luego combinarlos en uno sólo (Redux sólo acepta un único reducer). Además vamos a darle el estado inicial y la forma al store:
+
+```javascript
+
+// Forma del store:
+store = {
+  products: { 
+    items: [], // los productos que tenemos
+    isLoading: bool, // booleano para indicar si esta fetcheando o no
+    categories: [] // las categorias
+  },
+  cart: {
+    productId: string, // id del producto
+    quantity: number, // cantidad de ese producto
+  }
+}
+
+```
+
+#### Reducer de Productos
+
+En este vamos a agrupar todas las acciones que tengan que ver con los productos y categorías:
+
+```javascript
+// reducers/products.js
+import { GET_PRODUCTS, RECEIVE_PRODUCTS, RECEIVE_CATEGORIES, GET_CATEGORIES } from '../actions';
+
+function products(state = { items: [], isLoading: false, categories: [] }, action) {
+  
+  switch (action.type) {
+    case GET_PRODUCTS:
+      return {  
+        ...state,
+        isLoading: true,
+      }
+    ...
+    default:
+      return state
+  }
+}
+
+export default products;
+
+```
+
+#### Reducer del cart
+
+En este reducer vamos a agrupar las acciones del carrito:
+
+```javascript
+// reducers/cart.js
+
+import { combineReducers } from 'redux';
+import { ADD_TO_CART, REMOVE_FROM_CART, CHANGE_QUANTITY,  } from '../actions'
+
+function cart(state = [], action) {
+  const elem = state.cart.findIndex(elem => elem.productId === action.productId);
+  switch (action.type) {
+    case ADD_TO_CART:
+      if(elem === -1) {
+        return {
+          ...state,
+          cart: [...state.cart, {
+            productId: action.productId,
+            quantity: 1,
+          }],
+        };
+      }
+      return {
+        cart: [...state.cart.slice(0, elem),
+          {
+            productId: action.productId,
+            quantity: state.cart[elem].quantity + 1,
+          },
+          ...state.cart.slice(elem),
+        ],
+      }
+      ...
+    default:
+      return state
+  }
+}
+
+export default cart;
+```
+
+> No se olviden que el estado es inmutable! por lo tanto, los reducers tienen que devolver siempre un estado nuevo.
+
+Por último vamos a combinar los dos reducers en un único reducer, para eso usamos el helper de `redux` llamado `combineReducers`, que recibe un arreglo de reducers y devuelve un único reducer:
+
+```javascript
+// reducers/index.js
+
+import { combineReducers } from 'redux';
+import cart from './products';
+import products from './products';
+
+const rootReducer = combineReducers({
+  cart,
+  products,
+});
+
+export default rootReducer;
+```
+
+### Creando el Store
+
+En el archivo `index.js` vamos a importar el componente __Provider__ de `react-redux` y las funcion __createStore__ de `redux`, junto con el  `rootReducer` que creamos recién:
+
+```javascript
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
+import rootReducer from './reducers';
+
+const store = createStore(
+  rootReducer,
+);
+
+const appDiv = document.getElementById('app');
+
+if (appDiv) render(
+  <Provider store={store}>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </Provider>, appDiv);
+```
+
+### Conectado un Container al Provider
+
+Ahora, vamos a importar la función `connect` de redux en nuestro container `App.jsx` para poder _conectarlo_ al store a través del `Provider`:
+
+```javascript
+// containers/App.jsx
+...
+import { connect } from 'react-redux';
+...
+const mapStateToProps = state => {
+  return {
+    products: state.products.items,
+    loading: state.products.isLoading,
+    categories: state.products.categories,
+  }
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    getProducts: () => dispatch(getAllProducts()),
+  };
+}
+
+...
+export default connect(mapStateToProps, mapDispatchToProps)(App); // exportamos el componente conectado
+```
+
+### Disparando las acciones
+
+### Conectando `redux` y `saga` a React
+
+Para correr sagas vamos a necesitar:
+* Crear un middleware con la lista de Sagas para correr (luego definiremos las sagas).
+* Conectar el middleware de saga al redux store.
+
+Esto lo vamos a hacer en el archivo `index.js`:
+
+```javascript
+...
+// Redux-Saga
+import { Provider } from 'react-redux';
+import { createStore, applyMiddleware } from 'redux';
+import createSagaMiddleware from 'redux-saga';
+import rootReducer from './reducers';
+import rootSaga from './sagas';
+
+const sagaMiddleware = createSagaMiddleware(); //creamos el middleware
+const store = createStore(
+  rootReducer,
+  applyMiddleware(sagaMiddleware) // aplicamos el middleware a redux
+);
+sagaMiddleware.run(rootSaga); // Ejecutamos los sagas
+
+const appDiv = document.getElementById('app');
+
+if (appDiv) render(
+  <Provider store={store}> //conectamos el store al Provider
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </Provider>, appDiv);
+```
+
+### Sagas
+
+
+
+
+
+

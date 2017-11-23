@@ -1,5 +1,6 @@
 // @flow
 import React from 'react';
+import { connect } from 'react-redux'
 import axios, { type $AxiosXHR } from 'axios';
 import { Route, Redirect, Switch, type ContextRouter } from 'react-router';
 import Grid from '../components/Grid';
@@ -8,6 +9,7 @@ import ProductComponent from '../components/Product';
 import Cart from './Cart';
 import { type Product, type Category } from '../types';
 import s from './App.css';
+import { getAllProducts } from '../actions/index.js';
 
 type Props = {};
 
@@ -17,28 +19,26 @@ type State = {
   loading: boolean,
 };
 
-export default class App extends React.Component<Props, State> {
-  state = {
-    products: [],
-    categories: [],
-    loading: true,
+const mapStateToProps = state => {
+  return {
+    products: state.products.items,
+    loading: state.products.isLoading,
+    categories: state.products.categories,
   }
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    getProducts: () => dispatch(getAllProducts()),
+  };
+}
+
+class App extends React.Component<Props, State> {
 
   componentDidMount() {
-    Promise.all([this.fetchProducts(), this.fetchCategories()])
-      .then(() => this.setState({ loading: false }));
-  }
-
-  fetchProducts() {
-    return axios.get('/api/products')
-      .then((res: $AxiosXHR<Product[]>) => res.data)
-      .then((products: Product[]) => this.setState({ products }));
-  }
-
-  fetchCategories() {
-    return axios.get('/api/categories')
-      .then((res: $AxiosXHR<Category[]>) => res.data)
-      .then((categories: Category[]) => this.setState({ categories }));
+    this.props.getProducts();
+    // Promise.all([this.fetchCategories()])
+    //   .then(() => this.setState({ loading: false }));
   }
 
   addProduct = (product: Product) => {
@@ -53,14 +53,14 @@ export default class App extends React.Component<Props, State> {
 
   render() {
     return (
-      this.state.loading ?
+      this.props.loading ?
         <div>Loading...</div>
         :
         <div className={s.layout}>
           <div>
             <Sidebar
               addProduct={this.addProduct}
-              categories={this.state.categories}
+              categories={this.props.categories}
             />
           </div>
           <div>
@@ -70,7 +70,7 @@ export default class App extends React.Component<Props, State> {
                 exact
                 render={(props: ContextRouter) => (
                   <Grid
-                    products={this.state.products}
+                    products={this.props.products}
                     selectedCategory={Number(new URLSearchParams(props.location.search).get('category'))}
                     {...props}
                   />
@@ -81,7 +81,7 @@ export default class App extends React.Component<Props, State> {
                 render={(props: ContextRouter) => (
                   <ProductComponent
                     {...props}
-                    product={this.state.products.find(product =>
+                    product={this.props.products.find(product =>
                       String(product.id) === props.match.params.id)}
                     addProductToCart={() => this.addProductToCart(props.match.params.id)}
                   />
@@ -99,3 +99,6 @@ export default class App extends React.Component<Props, State> {
     );
   }
 }
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
