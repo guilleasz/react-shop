@@ -2,7 +2,8 @@ import { take, put, call, fork, select, takeEvery, all } from 'redux-saga/effect
 import {GET_PRODUCTS, GET_CATEGORIES, RECEIVE_CATEGORIES,  receiveProducts, receiveCategories} from '../actions';
 import axios from 'axios';
 
-const host = 'http://localhost:3000';
+//const host = 'http://localhost:3000';
+const host = 'http://develop.plataforma5.la:3000';
 
 
 const getAllProductsAPI = () => axios.get(`${host}/api/products`, {
