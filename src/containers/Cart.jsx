@@ -18,15 +18,15 @@ const mapStateToProps = state => {
 
 function mapDispatchToProps(dispatch) {
   return {
-    removeFromCart: () => dispatch(removeFromCart()),
+    removeFromCart: (index) => dispatch(removeFromCart(index)),
   };
 }
 
 const Cart = (props) => (
   <ul>
-      {props.items.map((cartItem,index) =>
-        <li key={cartItem.id}>Name: {cartItem.product.name} Quantity: {cartItem.quantity}
-        <button onClick={()=>{this.props.removeFromCart(index)}}>Remove from cart</button></li>)}
+      {props.items.map((cartItem, index) =>
+        <li key={cartItem.product.id}>Name: {cartItem.product.name} Quantity: {cartItem.quantity}
+        <button onClick={()=>{props.removeFromCart(index)}}>Remove from cart</button></li>)}
     </ul>
   );
 
