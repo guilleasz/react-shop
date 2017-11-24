@@ -8,6 +8,7 @@
     "start": "nodemon app.js",
     "seed": "node seed.js",
     "build": "webpack -w",
+    "serve": "webpack-dev-server",
     "flow": "flow check"
   },
   "repository": {
@@ -33,7 +34,8 @@
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
     "redux": "^3.7.2",
-    "sequelize": "^4.22.5"
+    "sequelize": "^4.22.5",
+    "webpack-dev-server": "^2.9.4"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
