@@ -21,6 +21,7 @@ type State = {
   loading: boolean,
 };
 
+
 const mapStateToProps = (state) => {
   return {
     products: state.products.items,

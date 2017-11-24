@@ -8,7 +8,6 @@ import { removeFromCart } from '../actions/index.js';
 
 type Props = ContextRouter;
 
-
 const mapStateToProps = state => {
   return {
     items: state.cart.items,
