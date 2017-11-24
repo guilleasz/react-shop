@@ -32,10 +32,10 @@ export function receiveCategories(categories) {
   }
 }
 
-export function addToCart(productId) {
+export function addToCart(product) {
   return {
     type: ADD_TO_CART,
-    productId
+    product,
   }
 }
 

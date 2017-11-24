@@ -2,7 +2,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import axios, { type $AxiosXHR } from 'axios';
-import { Route, Redirect, Switch, type ContextRouter } from 'react-router';
+import { Route, Redirect, Switch, withRouter, type ContextRouter } from 'react-router';
 import Grid from '../components/Grid';
 import Sidebar from '../components/Sidebar';
 import ProductComponent from '../components/Product';
@@ -21,21 +21,21 @@ type State = {
   loading: boolean,
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     products: state.products.items,
     loading: state.products.isLoading,
     categories: state.products.categories,
-  }
+  };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
     getProducts: () => dispatch(getAllProducts()),
     getCategories: () => dispatch(getAllCategories()),
-    receiveProducts: (products) => dispatch(receiveProducts(products)),
-    receiveCategories: (categories) => dispatch(receiveCategories(categories)),
-    addToCart: (product) => dispatch(addToCart(product)),
+    receiveProducts: products => dispatch(receiveProducts(products)),
+    receiveCategories: categories => dispatch(receiveCategories(categories)),
+    addToCart: product => dispatch(addToCart(product)),
   };
 }
 
@@ -78,14 +78,17 @@ class App extends React.Component<Props, State> {
               />
               <Route
                 path="/products/:id"
-                render={(props: ContextRouter) => (
-                  <ProductComponent
-                    {...props}
-                    product={this.props.products.find(product =>
-                      String(product.id) === props.match.params.id)}
-                    addProductToCart={() => this.addToCart(product)}
-                  />
-                )}
+                render={(props: ContextRouter) => {
+                  const product = this.props.products.find(product =>
+                    String(product.id) === props.match.params.id);
+                  return (
+                    <ProductComponent
+                      {...props}
+                      product={product}
+                      addProductToCart={() => this.props.addToCart(product)}
+                    />
+                );
+              }}
               />
               <Route
                 path="/cart"
@@ -101,4 +104,4 @@ class App extends React.Component<Props, State> {
 }
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(App));

@@ -3,12 +3,14 @@
 import React from 'react';
 import { render } from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
-import App from './containers/App';
 
 // Redux-Saga
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import rootReducer from './reducers';
+
+import App from './containers/App';
+
 
 const store = createStore(
   rootReducer,
@@ -17,9 +19,12 @@ const store = createStore(
 
 const appDiv = document.getElementById('app');
 
-if (appDiv) render(
-  <Provider store={store}>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </Provider>, appDiv);
+if (appDiv) {
+  render(
+    <Provider store={store}>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </Provider>, appDiv);
+}
+
