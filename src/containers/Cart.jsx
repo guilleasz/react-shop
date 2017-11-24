@@ -12,7 +12,6 @@ type Props = ContextRouter;
 const mapStateToProps = state => {
   return {
     items: state.cart.items,
-    error: state.cart.error,
   }
 }
 

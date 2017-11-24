@@ -490,15 +490,12 @@ Primero vamos a conectar `redux` en nuestra app, para hacerlo necesitamos:
 
 Definamos las acciones que vamos a necesitar en nuestra app, vamos a implementarlas junto con sus actions creators en la carpeta `actions`, en un archivo que podemos llamar `index.js`:
 
-* 'GET_PRODUCTS': Envia un request por todos los productos.
-* 'RECEIVE_PRODUCTS': Recibe todos los productos.
-* 'RECEIVE_CATEGORIES': Recibe todos las categorías.
-* 'ADD_TO_CART': Agrega un producto al carrito.
-* 'REMOVE_FROM_CART': Saca un producto del carrito.
-* 'CHANGE_QUANTITY': Cambia la cantidad de un producto en el carrito.
-* 'CHECKOUT_REQUEST': Envia un Request para procesar la compra.
-* 'CHECKOUT_SUCCESS': Indica que la compra se realizó con éxito.
-* 'CHECKOUT_FAILURE': Indica que hubo un error en la compra.
+* 'GET_PRODUCTS': Envia un request por todos los productos (asincrónica).
+* 'GET_CATEGORIES': Envia un request por todos los productos (asincrónica).
+* 'RECEIVE_PRODUCTS': Recibe todos los productos (asincrónica).
+* 'RECEIVE_CATEGORIES': Recibe todos las categorías (asincrónica).
+* 'ADD_TO_CART': Agrega un producto al carrito (sincrónica).
+* 'REMOVE_FROM_CART': Saca un producto del carrito (sincrónica).
 
 ```javascript
 // actions/index.js
@@ -538,8 +535,6 @@ store = {
   },
   cart: 
     items: [],
-    isLoading: bool,
-    error: null, // flag que nos indica si hubo un error cuando hicimos la compra.
 }
 
 ```
@@ -558,7 +553,7 @@ initialState = {
   isLoading: false,
 };
 
-function products(state = { items: [], isLoading: false, categories: [] }, action) {
+function products(state = initialState, action) {
   
   switch (action.type) {
     case GET_PRODUCTS:
@@ -582,12 +577,10 @@ En este reducer vamos a agrupar las acciones del carrito:
 
 ```javascript
 // reducers/cart.js
-import { ADD_TO_CART, REMOVE_FROM_CART, CHANGE_QUANTITY, CHECKOUT_REQUEST, CHECKOUT_SUCCESS, CHECKOUT_FAILURE  } from '../actions'
+import { ADD_TO_CART, REMOVE_FROM_CART } from '../actions'
 
 const initialState = {
   items: [],
-  error: null,
-  isLoading: false,
 };
 
 function cart(state = initialState, action) {
@@ -597,16 +590,16 @@ function cart(state = initialState, action) {
       if(elem === -1) {
         return {
           ...state,
-          cart: [...state.items, {
-            productId: action.productId,
+          items: [...state.items, {
+            product: action.product,
             quantity: 1,
           }],
         };
       }
       return {
-        cart: [...state.items.slice(0, elem),
+        items: [...state.items.slice(0, elem),
           {
-            productId: action.productId,
+            product: action.product,
             quantity: state.items[elem].quantity + 1,
           },
           ...state.items.slice(elem),
@@ -670,16 +663,41 @@ if (appDiv) render(
 
 #### Cart.jsx
 
+Ahora, vamos a importar la función `connect` de redux en nuestro container `App.jsx` para poder _conectarlo_ al store a través del `Provider`:
+
+```javascript
+// containers/Cart.jsx
+import { connect } from 'react-redux'
+...
+import { removeFromCart } from '../actions/index.js';
+...
+
+const mapStateToProps = state => {
+  return {
+    items: state.cart.items,
+  }
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    removeFromCart: () => dispatch(removeFromCart()),
+  };
+}
+
+...
+export default connect(mapStateToProps, mapDispatchToProps)(Cart); // exportamos el componente conectado
+```
+
 #### App.jsx
 
-Ahora, vamos a importar la función `connect` de redux en nuestro container `App.jsx` para poder _conectarlo_ al store a través del `Provider`:
+Hacemos lo mismo para conectar nuestro container `App.jsx` a través del `Provider`:
 
 ```javascript
 // containers/App.jsx
 ...
 
 import { connect } from 'react-redux';
-
+import { withRouter } from 'react-router';
 ...
 
 const mapStateToProps = state => {
@@ -697,19 +715,28 @@ function mapDispatchToProps(dispatch) {
 }
 
 ...
-export default connect(mapStateToProps, mapDispatchToProps)(App); // exportamos el componente conectado
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(App)); 
 ```
+
+> Tenemos que usar el `helper` `withRouter` del router, porque el connect no recibe las locations por props, por lo tanto sin esto no se actualizaria cuando cambiamos la url actual.
 
 ### Disparando las acciones
 
 Ahora tienen que refactorear el hook `componentDidMount` para que en el mismo se disparen las acciones:
   * GET_PRODUCTS.
   * GET_CATEGORIES.
+
 Y cuando se obtengan los datos del fetch (en el `then` de axios), disparen las acciones:
 * RECEIVE_PRODUCTS.
 * RECEIVE_CATEGORIES.
 
+Con respecto al Cart, vamos a tener que pasar una función `addToCart` que reciba un producto desde `App`. Y que dicha función dispare la acción de agregar tal producto al carrito.
+
+Para remover un producto, pasamos el índice del producto en el carrito a la acción `REMOVE_FROM_CART`, y en el reducer, eliminamos el producto que está en ese índice.
+
 ### Conectando `redux` y `saga` a React
+
+Ahora, vamos a reemplazar las acciones asincrónicas por `redux-saga`.
 
 Para correr sagas vamos a necesitar:
 * Crear un middleware con la lista de Sagas para correr (luego definiremos las sagas).

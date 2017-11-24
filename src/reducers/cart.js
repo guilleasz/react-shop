@@ -2,8 +2,6 @@ import { ADD_TO_CART, REMOVE_FROM_CART } from '../actions'
 
 const initialState = {
   items: [],
-  error: null,
-  isLoading: false,
 };
 
 function cart(state = initialState, action) {
