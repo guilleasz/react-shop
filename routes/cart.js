@@ -5,7 +5,7 @@ module.exports = router;
 
 router.get('/', (req, res, next) => {
   Cart.findAll({
-    include: [Product]
+    include: [Product],
   })
     .then(res.send.bind(res))
     .catch(next);
@@ -22,4 +22,9 @@ router.put('/:id', (req, res, next) => {
     .then(cart => cart.update(req.body))
     .then(res.send.bind(res))
     .catch(next);
+});
+
+router.post('/checkout', (req, res, next) => {
+  if(req.body.cart.lenght <= 1) return res.status(200);
+  return res.status(500);
 });

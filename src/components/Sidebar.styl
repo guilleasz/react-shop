@@ -1,0 +1,30 @@
+.sidebar
+  list-style-type: none
+  margin: 0
+  padding: 0
+  li button
+    margin-bottom: 15px
+  h2
+    font-size: 20px
+    margin: 0px
+    padding: 0px
+    cursor: pointer
+  li
+    border-bottom: 1px solid #ccc
+    &:last-child
+      border: none;
+    h2
+      text-decoration: none;
+      color: #000;
+      -webkit-transition: font-size 0.3s ease, background-color 0.3s ease
+      -moz-transition: font-size 0.3s ease, background-color 0.3s ease
+      -o-transition: font-size 0.3s ease, background-color 0.3s ease
+      -ms-transition: font-size 0.3s ease, background-color 0.3s ease
+      transition: font-size 0.3s ease, background-color 0.3s ease
+      display: block
+      width: 200px
+      &:hover
+        font-size: 30px
+        background: #f6f6f6
+      &.active
+        color: red

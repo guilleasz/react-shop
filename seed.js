@@ -9,15 +9,15 @@ const createCategory = () => Category.create({
 const createCategories = (n) => {
   const categoriesPromises = [];
   for (let i = 0; i < n; i += 1) {
-    categoriesPromises.push(createCategory())
+    categoriesPromises.push(createCategory());
   }
   return Promise.all(categoriesPromises);
-}
+};
 
 const createProduct = categoryId => Product.create({
   name: faker.commerce.productName(),
   description: faker.lorem.paragraph(),
-  image: 'https://source.unsplash.com/random/350x300',
+  image: `http://lorempixel.com/400/200/cats/${categoryId}/`,
   categoryId,
   availability: !!Math.round(Math.random()),
   price: faker.commerce.price(),
@@ -28,11 +28,11 @@ const createCatalogue = (n, categories) => {
   for (let i = 0; i < n; i += 1) {
     const categoryId = faker.random.arrayElement(categories).id;
     productPromises.push(createProduct(categoryId));
-  }  
+  }
   return Promise.all(productPromises);
-}
+};
 
-const createCartItem = (productId) => Cart.create({
+const createCartItem = productId => Cart.create({
   quantity: faker.random.number(9) + 1,
   productId,
 });
@@ -44,9 +44,9 @@ const createCart = (n, products) => {
     cartItemPromises.push(createCartItem(productId));
   }
   return Promise.all(cartItemPromises);
-}
+};
 
-const generateShop = (nCat, nProd, nCart) => 
+const generateShop = (nCat, nProd, nCart) =>
   db.sync({ force: true })
     .then(() => createCategories(nCat))
     .then(categories => createCatalogue(nProd, categories))

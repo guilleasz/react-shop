@@ -6,7 +6,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon app.js",
-    "seed": "node seed.js"
+    "seed": "node seed.js",
+    "build": "webpack -w",
+    "serve": "webpack-dev-server",
+    "flow": "flow check"
   },
   "repository": {
     "type": "git",
@@ -19,10 +22,38 @@
   },
   "homepage": "https://github.com/Plataforma5/react-shop#readme",
   "dependencies": {
+    "axios": "^0.17.1",
     "body-parser": "^1.18.2",
+    "eslint-config-airbnb": "^16.1.0",
     "express": "^4.16.2",
     "faker": "^4.1.0",
     "pg": "^7.4.0",
-    "sequelize": "^4.22.5"
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0",
+    "react-redux": "^5.0.6",
+    "react-router": "^4.2.0",
+    "react-router-dom": "^4.2.2",
+    "redux": "^3.7.2",
+    "redux-logger": "^3.0.6",
+    "sequelize": "^4.22.5",
+    "webpack-dev-server": "^2.9.4"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^8.0.2",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "css-loader": "^0.28.7",
+    "css-modules-flow-types-loader": "^1.1.0",
+    "eslint": "^4.10.0",
+    "eslint-plugin-flowtype": "^2.39.1",
+    "eslint-plugin-react": "^7.4.0",
+    "flow-bin": "^0.59.0",
+    "style-loader": "^0.19.0",
+    "stylus": "^0.54.5",
+    "stylus-loader": "^3.0.1",
+    "webpack": "^3.8.1"
   }
 }
