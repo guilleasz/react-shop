@@ -747,33 +747,67 @@ Esto lo vamos a hacer en el archivo `index.js`:
 ```javascript
 ...
 // Redux-Saga
+// Redux-Saga
 import { Provider } from 'react-redux';
-import { createStore, applyMiddleware } from 'redux';
+import { createStore, applyMiddleware } from 'redux'
+import { createLogger } from 'redux-logger';
 import createSagaMiddleware from 'redux-saga';
 import rootReducer from './reducers';
 import rootSaga from './sagas';
 
-const sagaMiddleware = createSagaMiddleware(); //creamos el middleware
+import App from './containers/App';
+
+const sagaMiddleware = createSagaMiddleware()
 const store = createStore(
+  //window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
   rootReducer,
-  applyMiddleware(sagaMiddleware) // aplicamos el middleware a redux
+  applyMiddleware(sagaMiddleware, createLogger()),
 );
-sagaMiddleware.run(rootSaga); // Ejecutamos los sagas
+sagaMiddleware.run(rootSaga);
 
 const appDiv = document.getElementById('app');
 
-if (appDiv) render(
-  <Provider store={store}> //conectamos el store al Provider
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </Provider>, appDiv);
+if (appDiv) {
+  render(
+    <Provider store={store}>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </Provider>, appDiv);
+}
 ```
 
 ### Sagas
 
+Ahora vamos a crear un Saga llamado `getAllProductsAndCategories`. El objetivo de este Saga es traer todos los productos y las categorías cuando se invoca la accion `GET_PRODUCTS`.
 
+```javascript
+export function* getAllProductsAndCategories() {
+  const products = yield call(axios.get, `${host}/api/products`);
+  const categories = yield call(axios.get, `${host}/api/categories`);
+  yield [
+    put(receiveProducts(products.data)),
+    put(receiveCategories(categories.data))
+  ];
+}
+```
 
+Ahora vamos a crear las sagas que _watchean_ por esa acción:
 
+```javascript
+// Cada vez que suceda GET_PRODUCTS, que se invoque nuestro saga:
+export function *watchGetProducts() {
+  yield takeEvery(GET_PRODUCTS, getAllProductsAndCategories);
+}
 
+// Esto indica que cuando se levante nuestra app, se ejecute el saga Watch
+export default function *root() {
+ yield all([
+    fork(watchGetProducts),
+ ])
+}
+```
 
+Por último nos falta modificar `App.jsx` para, en vez de hacer un fetch en el `ComponenteDidMount`, hagamos un dispatch de la acción que está esperando el Saga.
+
+Por último, y guiandote de lo anterior, crea las acciones necesarias y el saga para poder realizar un POST de un producto.

@@ -42,13 +42,15 @@ function mapDispatchToProps(dispatch) {
 class App extends React.Component<Props, State> {
 
   componentDidMount() {
+    // this.props.getProducts();
+    // this.props.getCategories();
+    // Promise.all([axios.get(`${url}/products`), axios.get(`${url}/categories`)])
+    //   .then(([products, categories]) => {
+    //     this.props.receiveProducts(products.data);
+    //     this.props.receiveCategories(categories.data);
+    //   });
     this.props.getProducts();
     this.props.getCategories();
-    Promise.all([axios.get(`${url}/products`), axios.get(`${url}/categories`)])
-      .then(([products, categories]) => {
-        this.props.receiveProducts(products.data);
-        this.props.receiveCategories(categories.data);
-      });
   }
 
   render() {
