@@ -1,15 +1,10 @@
-// @flow
-import * as React from 'react';
+import React from 'react';
 import Item from './Item';
-import { type Product } from '../types';
 import s from './Grid.css';
 
 const Grid = ({
   products,
   selectedCategory,
-}: {
-  products: Product[],
-  selectedCategory: ?number,
 }) => (
   <div className={s.grid}>
     {products
