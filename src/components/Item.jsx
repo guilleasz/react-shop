@@ -2,7 +2,6 @@
 import React from 'react';
 import { type Match } from 'react-router';
 import { Link } from 'react-router-dom';
-import { type Product } from '../types';
 import s from './Item.css';
 
 const Item = ({ product, match }: { product: Product, match: Match }) => (
