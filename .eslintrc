@@ -6,17 +6,11 @@
     "es6": true,
     "jest": true
   },
-  "extends": ["airbnb", "plugin:flowtype/recommended"],
-  "plugins": ["react", "flowtype"],
+  "plugins": ["react"],
   "rules": {
      "no-param-reassign": 0,
 	   "no-underscore-dangle": 0,
      "react/forbid-prop-types": 0,
-     "react/require-default-props": 0,
-     "jsx-a11y/anchor-is-valid": [ "error", {
-        "components": [ "Link" ],
-        "specialLink": [ "to", "hrefLeft", "hrefRight" ],
-        "aspects": [ "noHref", "invalidHref", "preferButton" ]
-      }]
+     "react/require-default-props": 0
    }
 }
