@@ -449,3 +449,52 @@ Ahora manejemos rutas que no existen. Creemos una ruta al final de nuestro Switc
 Usemos esto que acabamos de crear para que sirva también cuando ponemos en la URL un id de un producto que no existe. En el componente del producto individual si no llegará a recibir un producto redirigí usando `Redirect` a la ruta `/NotFound`.
 
 > No es necesario definir `/NotFound` ya que nuestro error handler va a capturar todas las rutas no definidas.
+
+## Redux
+
+### Diseñando el store 
+
+Lo primero que vamos a hacer es diseñar nuestro store de redux. Asi que vamos a decidir nuestros reducers y acciones. 
+
+#### Reducers
+
+- Products
+- Categories
+- Cart
+
+#### Acciones
+
+- Products
+  - SET_PRODUCTS
+  - ADD_PRODUCT
+- Categories
+  - SET_CATEGORIES
+- Cart
+  - ADD\_TO\_CART
+  - REMOVE\_FROM\_CART
+
+### Manos a la obra
+
+Ahora antes de empezar instalemos redux en nuestra aplicación:
+
+```
+npm install --save redux
+```
+
+Una vez instalado el paquete creemos la estructura de archivo necesaria, se debería ver algo así
+
+```
+- redux
+  |-- reducers
+  |   |-- cart.js
+  |   |-- products.js
+  |   |-- category.js
+  |   |-- index.js
+  |-- actions
+  |   |-- cart.js
+  |   |-- products.js
+  |   |-- category.js
+  |   |-- index.js
+  |
+  |-- store.js
+```
