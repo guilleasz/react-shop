@@ -1,15 +1,10 @@
-// @flow
 import React from 'react';
-import { type RouterHistory, Redirect } from 'react-router';
-import { type Product as ProductType } from '../types';
+import { Redirect } from 'react-router';
 import s from './Product.styl';
 
 const Product = ({
   product,
   history,
-}: {
-  product: ProductType,
-  history: RouterHistory,
 }) => (
   product ?
     <div>

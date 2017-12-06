@@ -1,19 +1,9 @@
 // @flow
 import React from 'react';
-import axios, { type $AxiosXHR } from 'axios';
-import { type Category, type Product } from '../types';
+import axios from 'axios';
 
-type Props = {
-  categories: Category[],
-  addProduct: (product: Product) => void
-};
 
-type State = {
-  ...$Exact<Product>,
-  priceError: boolean,
-}
-
-export default class AddProduct extends React.Component<Props, State> {
+export default class AddProduct extends React.Component {
   state = {
     name: '',
     description: '',
@@ -24,12 +14,12 @@ export default class AddProduct extends React.Component<Props, State> {
     priceError: false,
   }
 
-  handleChange = (e: SyntheticInputEvent<HTMLInputElement | HTMLSelectElement>) => {
+  handleChange = () => {
     this.setState({
       [e.target.name]: e.target.value,
     });
   }
-  handleSubmit = (e: SyntheticEvent<HTMLFormElement>) => {
+  handleSubmit = () => {
     e.preventDefault();
     const { price } = this.state;
     const [num, cents] = price.split('.');
@@ -39,7 +29,7 @@ export default class AddProduct extends React.Component<Props, State> {
       });
     }
     return axios.post('/products', this.state)
-      .then((res: $AxiosXHR<Product>) => res.data)
+      .then(res => res.data)
       .then(this.props.addProduct)
       .then(() => {
         this.setState({
