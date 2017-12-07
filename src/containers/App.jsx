@@ -1,10 +1,21 @@
+// @flow
 import React from 'react';
-import axios  from 'axios';
+import axios, { type $AxiosXHR } from 'axios';
 import Grid from '../components/Grid';
 import Sidebar from '../components/Sidebar';
+import { type Product, type Category } from '../types';
 import s from './App.css';
 
-export default class App extends React.Component {
+type Props = {};
+
+type State = {
+  products: Product[],
+  categories: Category[],
+  selectedCategory: ?number,
+  loading: boolean,
+};
+
+export default class App extends React.Component<Props, State> {
   state = {
     products: [],
     categories: [],
@@ -19,23 +30,23 @@ export default class App extends React.Component {
 
   fetchProducts() {
     return axios.get('http://develop.plataforma5.la:3000/api/products')
-      .then(res => res.data)
-      .then(products => this.setState({ products }));
+      .then((res: $AxiosXHR<Product[]>) => res.data)
+      .then((products: Product[]) => this.setState({ products }));
   }
 
   fetchCategories() {
     return axios.get('http://develop.plataforma5.la:3000/api/categories')
-      .then(res => res.data)
-      .then(categories => this.setState({ categories }));
+      .then((res: $AxiosXHR<Category[]>) => res.data)
+      .then((categories: Category[]) => this.setState({ categories }));
   }
 
-  changeCategory = (selectedCategory) => {
+  changeCategory = (selectedCategory: ?number) => {
     this.setState({
       selectedCategory,
     });
   }
 
-  addProduct = (product) => {
+  addProduct = (product: Product) => {
     this.setState({
       products: [product, ...this.state.products],
     });
