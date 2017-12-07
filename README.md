@@ -482,6 +482,8 @@ Ahora antes de empezar instalemos redux en nuestra aplicación:
 npm install --save redux
 ```
 
+Tambien vuelve a correr `flow-typed install` para instalar las definiciones de flow de redux. Esto te instalará definiciones como `ActionCreator`, `Dispatch`, `Store` y `Reducer` que serán muy útiles.
+
 Una vez instalado el paquete creemos la estructura de archivo necesaria, se debería ver algo así
 
 ```

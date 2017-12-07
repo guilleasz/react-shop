@@ -1,5 +1,7 @@
+// @flow
+
 import React from 'react';
-import axios from 'axios';
+import axios, { type $AxiosXHR } from 'axios';
 import { Route, Redirect, Switch } from 'react-router';
 import Grid from '../components/Grid';
 import Sidebar from '../components/Sidebar';
@@ -10,8 +12,19 @@ import store from '../redux/store';
 import { setProducts, addProduct } from '../redux/actions/products';
 import { setCategories } from '../redux/actions/categories';
 import { addToCart, removeFromCart } from '../redux/actions/cart';
+import { type Product as $Product, type Category, type CartItem } from '../types';
 
-export default class App extends React.Component {
+type State = {
+  products: $Product[],
+  categories: Category[],
+  cart: CartItem[],
+  loading: boolean
+}
+type Props = {
+
+}
+
+export default class App extends React.Component<Props, State> {
   state = {
     products: store.getState().products.items,
     categories: store.getState().categories.items,
@@ -20,7 +33,7 @@ export default class App extends React.Component {
   }
 
   componentWillMount() {
-    this.subscription = store.subscribe(() => {
+    this.unsubcribe = store.subscribe(() => {
       const { products, categories, cart } = store.getState();
       this.setState({
         products: products.items,
@@ -36,29 +49,30 @@ export default class App extends React.Component {
   }
 
   componentWillUnmount() {
-    store.unsubcribe(this.subscription);
+    this.unsubcribe();
   }
-  fetchProducts() {
-    return axios.get('http://develop.plataforma5.la:3000/api/products')
-      .then(res => res.data)
+
+  unsubcribe: () => void
+
+  fetchProducts = () =>
+    axios.get('http://develop.plataforma5.la:3000/api/products')
+      .then((res: $AxiosXHR<$Product[]>) => res.data)
       .then(products => store.dispatch(setProducts(products)));
-  }
 
-  fetchCategories() {
-    return axios.get('http://develop.plataforma5.la:3000/api/categories')
-      .then(res => res.data)
+  fetchCategories = () =>
+    axios.get('http://develop.plataforma5.la:3000/api/categories')
+      .then((res: $AxiosXHR<Category[]>) => res.data)
       .then(categories => store.dispatch(setCategories(categories)));
+
+  addProduct = (product: $Product) => {
+    store.dispatch(addProduct(product));
   }
 
-  addProduct = (product) => {
-    store.dispatch(addProduct(product))
-  }
-
-  addToCart = (product) => {
+  addToCart = (product: $Product) => {
     store.dispatch(addToCart(product));
   }
 
-  removeFromCart = (index) => {
+  removeFromCart = (index: number) => {
     store.dispatch(removeFromCart(index));
   }
 
