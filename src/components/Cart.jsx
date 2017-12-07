@@ -1,8 +1,14 @@
+// @flow
 import React from 'react';
+import { type CartItem } from '../types';
 
 const Cart = ({
   cart,
   removeFromCart,
+}:
+{
+  cart: CartItem[],
+  removeFromCart: (index: number) => void,
 }) => (
   <div>
     <ul>
