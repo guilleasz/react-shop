@@ -1,14 +1,16 @@
+// @flow
 /* eslint-disable jsx-a11y/click-events-have-key-events,
 jsx-a11y/no-noninteractive-element-interactions */
 import React from 'react';
-import { Route } from 'react-router';
+import { Route, type ContextRouter } from 'react-router';
 import { Link } from 'react-router-dom';
+import { type Category, type Product } from '../types';
 import s from './Sidebar.styl';
 import AddProduct from '../containers/AddProduct';
 
-const ActiveLink = ({ to, label }) => (
+const ActiveLink = ({ to, label }: {to: string, label: string }) => (
   <Route path={to} exact>
-    {({ location }) => (
+    {({ location }: ContextRouter) => (
       <Link to={to}>
         <h2 className={(location.pathname + location.search) === to ? s.active : ''}>
           {label}
@@ -21,6 +23,9 @@ const ActiveLink = ({ to, label }) => (
 const Sidebar = ({
   categories,
   addProduct,
+}: {
+  categories: Category[],
+  addProduct: (product: Product) => void,
 }) => (
   <ul className={s.sidebar}>
     <li>

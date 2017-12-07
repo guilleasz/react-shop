@@ -1,12 +1,22 @@
+// @flow
 import React from 'react';
-import axios from 'axios';
-import { Route, Redirect, Switch } from 'react-router';
+import axios, { type $AxiosXHR } from 'axios';
+import { Route, Redirect, Switch, type ContextRouter } from 'react-router';
 import Grid from '../components/Grid';
 import Sidebar from '../components/Sidebar';
 import ProductComponent from '../components/Product';
+import { type Product, type Category } from '../types';
 import s from './App.css';
 
-export default class App extends React.Component {
+type Props = {};
+
+type State = {
+  products: Product[],
+  categories: Category[],
+  loading: boolean,
+};
+
+export default class App extends React.Component<Props, State> {
   state = {
     products: [],
     categories: [],
@@ -20,17 +30,17 @@ export default class App extends React.Component {
 
   fetchProducts() {
     return axios.get('http://develop.plataforma5.la:3000/api/products')
-      .then(res => res.data)
-      .then(products => this.setState({ products }));
+      .then((res: $AxiosXHR<Product[]>) => res.data)
+      .then((products: Product[]) => this.setState({ products }));
   }
 
   fetchCategories() {
     return axios.get('http://develop.plataforma5.la:3000/api/categories')
-      .then(res => res.data)
-      .then(categories => this.setState({ categories }));
+      .then((res: $AxiosXHR<Category[]>) => res.data)
+      .then((categories: Category[]) => this.setState({ categories }));
   }
 
-  addProduct = (product) => {
+  addProduct = (product: Product) => {
     this.setState({
       products: [product, ...this.state.products],
     });
@@ -53,7 +63,7 @@ export default class App extends React.Component {
               <Route
                 path="/products"
                 exact
-                render={props => (
+                render={(props: ContextRouter) => (
                   <Grid
                     products={this.state.products}
                     selectedCategory={Number(new URLSearchParams(props.location.search).get('category'))}
@@ -63,7 +73,7 @@ export default class App extends React.Component {
               />
               <Route
                 path="/products/:id"
-                render={props => (
+                render={(props: ContextRouter) => (
                   <ProductComponent
                     {...props}
                     product={this.state.products.find(product =>
