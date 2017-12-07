@@ -5,6 +5,7 @@ import s from './Product.styl';
 const Product = ({
   product,
   history,
+  addToCart
 }) => (
   product ?
     <div>
@@ -17,6 +18,7 @@ const Product = ({
         <div>${product.price}</div>
         <div>{product.availability ? 'Available' : 'Out of Stock'}</div>
         <button onClick={history.goBack}>Go Back</button>
+        <button onClick={() => addToCart(product)}>Add to Cart</button>
       </div>
     </div>
     :

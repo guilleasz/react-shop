@@ -472,6 +472,7 @@ Lo primero que vamos a hacer es diseñar nuestro store de redux. Asi que vamos a
 - Cart
   - ADD\_TO\_CART
   - REMOVE\_FROM\_CART
+  - CHANGE_QUANTITY
 
 ### Manos a la obra
 
@@ -488,13 +489,168 @@ Una vez instalado el paquete creemos la estructura de archivo necesaria, se debe
   |-- reducers
   |   |-- cart.js
   |   |-- products.js
-  |   |-- category.js
+  |   |-- categories.js
   |   |-- index.js
   |-- actions
   |   |-- cart.js
   |   |-- products.js
-  |   |-- category.js
-  |   |-- index.js
+  |   |-- categories.js
   |
   |-- store.js
 ```
+
+### Creando nuestro primer reducer
+
+Vayamos al archivo `reducers/product.js` y diseñemos nuestro primer reducer. El reducer es una función pura, esto significa que es deterministica, por lo que dado un input siempre retorna el mismo output, y no tiene efectos secundarios. 
+
+El reducer toma dos argumentos, el estado, y la acción. Al estado le vamos a pasar un estado inicial por default. La acción va a ser un objeto donde la propiedad `type` va a decir que acción es.
+
+Nuestro reducer se vería algo así.
+
+```js
+const initialState = {
+  products: []
+}
+function productsReducer (state = initialState, action) {
+  switch(action.type) {
+    case 'SET_PRODUCTS':
+      return {
+        ...state,
+        products: action.products;
+      };
+    default:
+      return state;
+  }
+} 
+```
+
+Agrega las otras acciones necesarias de este reducer y define los otros dos reducers. **RECORDA** mantener el estado inmutable, siempre devolver un nuevo estado.
+
+El estado de categories va ser similar al de products, el de cart va a ser un arreglo de objetos con dos propiedades, `product`que va ser el producto añadido, y `quantity` que va ser la cantidad del producto en el cart. Cuando agreguemos un producto, nos vamos a fijar si ya fue añadido, sino, lo agregamos, pero si ya esta en el cart vamos a sumar cantidad, el reducer de cart se vería algo asi, tienes que completar la acción `REMOVE_FROM_CART`:
+
+```js
+function cartReducer (state = [], action) {
+  switch (action.type) {
+    case ADD_TO_CART: {
+      const index = state.findIndex(elem => elem.product.id === action.product.id);
+      if(index === -1) {
+        return [
+          ...state, 
+          {
+            product: action.product,
+            quantity: 1,
+          }];
+      }
+      return [
+          ...state.slice(0, index),
+          {
+            product: action.product,
+            quantity: state[index].quantity + 1,
+          },
+          ...state.slice(index + 1),
+        ];
+    }
+    ...
+
+    ...
+  }
+}
+```
+
+Usa las propiedades que creas necesarias de la acción para cada una, desps cuando crees las acciones te encargaras de definir esas propiedades.
+
+Una vez que las hayas creado importala a `reducers/index.js` y combina todos los reducers:
+
+
+```js
+import { combineReducers } from 'redux';
+import products './products';
+import categories './categories';
+import cart './cart';
+
+export combineReducers({ products, categories, cart })
+
+```
+
+
+### Definiendo acciones 
+
+Ahora vamos a hacer nuestros actionsCreators. Estos son muy simple son funciones que al ejecutarlas retornan la acción. Por ejemplo:
+
+
+```js
+function setProducts(products) {
+  return {
+    type: 'SET_PRODUCTS',
+    products,
+  };
+}
+```
+
+Haz los actionsCreators de todas las acciones. Recuerda de exportarlos para poder usarlos en tu aplicación luego.
+
+### Creando el store
+
+Ahora que ya tenemos nuestros reducers y actions creadas solo nos falta configurar nuestro store. En el archivo `store.js`
+
+```js
+import { createStore } from 'redux';
+import rootReducer from './reducers';
+
+const store = createStore(
+  rootReducer,
+  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(), // magia para que funcione la extensión de redux del google Chrome.
+);
+```
+
+Ahora si es momento de integrarlo a nuestra app.
+
+### Agregando el store en React
+
+Ahora lo que tenemos que hacer es subscribir el estado de nuestro componente al de nuestro store, por lo que cuando inicialicemos el estado vamos a asignarle la propiedad del store y desps nos vamos a subscribir a el, para escuchar los cambios y actualizar nuestro estado.
+
+```js
+
+state = {
+  products: store.getState().products
+}
+
+
+componentWillMount() {
+  this.subscription = store.subscribe(() => {
+    this.setState({
+      products: store.getState().products;
+    })
+  })
+}
+```
+
+
+Ahora cada vez que haya un cambio en el estado vamos a actualizar el componente pero, para actualizar nuestro store tenemos que dispatchear acciones, así q importa tus actionsCreators y dispatchealos en el store, en lugar de actualizar el estado del componentne:
+
+
+```js
+store.dispatch(setProducts(products));
+```
+
+Refactorea el resto de nuestro container `App.jsx` para que funcione con nuestro store.
+
+No te olvides de desuscribirte del store cuando el componente se desmonta:
+
+```js
+componentWillUnmount() {
+  store.unsubscribe(this.subscription);
+}
+```
+
+Si nuestra app sigue funcionando como antes agreguemos la funcionalidad del cart.
+
+### Cart
+
+Para hacer el cart vamos a tener que hacer dos cosas, primero un un boton dentro de la vista del producto individual que dispatchie la acción para agregar un producto, y luego una nueva ruta `/cart` que renderize un nuevo componente `Cart.jsx` que enliste los productos del carrito.
+
+Primero crea el clickHandler que se va a encargar de dispatchear la acción en `App.jsx`, luego pasalo como prop al componente `Product` y asignaselo al onClick de un boton. 
+
+Ahora crea el componente presentacional donde vamos a ver el carrito, recuerda añadir el carrito al estado de nuestro contenedor, y pasaselo como prop a `Cart`. El carrito debería ser una lista que muestre el nombre del producto y la cantidad.
+
+Una vez que tengas todos los elementos, agrega la funcionalidad dentro de `Cart` de poder removerlos del carrito. 
