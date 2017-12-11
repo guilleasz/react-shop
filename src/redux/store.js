@@ -1,12 +1,11 @@
 // @flow
-import { createStore, type Store } from 'redux';
+import { createStore, applyMiddleware, compose, type Store } from 'redux';
+import thunk from 'redux-thunk';
 import rootReducer from './reducers';
-import { type ReduxState, type Actions } from '../types';
+import { type ReduxState, type Actions, type DispatchThunk } from '../types';
 
-const store: Store<ReduxState, Actions> = createStore(
-  rootReducer,
-  // magia para que funcione la extensión de redux del google Chrome.
-  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
-);
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const middlewares = composeEnhancers(applyMiddleware(thunk));
+const store: Store<ReduxState, Actions | DispatchThunk> = createStore(rootReducer, middlewares);
 
 export default store;

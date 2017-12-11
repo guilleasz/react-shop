@@ -656,3 +656,99 @@ Primero crea el clickHandler que se va a encargar de dispatchear la acción en `
 Ahora crea el componente presentacional donde vamos a ver el carrito, recuerda añadir el carrito al estado de nuestro contenedor, y pasaselo como prop a `Cart`. El carrito debería ser una lista que muestre el nombre del producto y la cantidad.
 
 Una vez que tengas todos los elementos, agrega la funcionalidad dentro de `Cart` de poder removerlos del carrito. 
+
+
+## Parta 8: react-redux y thunks
+
+### Acciones asincrónicas y Contenedores Conectados
+
+Nuestra aplicación esta funcionando perfecto, pero ahora nos vamos a concentrar en las mejores prácticas al momento de utilizar `redux` junto a `react`. Tenemos dos problemas en nuestro código ahora. El primero es que tenemos que subscribir nuestro contenedor a el store y actualizar su estado cada vez que el state de redux cambia. Esto hace que tengamos dos estados que reflejan la misma información, el de redux y el de nuestro componente, lo cual agrega complejidad a la lógica de nuestro contenedor y le saca predicibilidad. Además, si tuvieramos mas contenedores, hacer toda esta configuración es más laboriosa y puede llevar a errores díficiles de encontrar. Lo mejor va ser usar `react-redux` que va a conectar automáticamente nuestro contenedor con el estado del store.
+
+El segundo problema, que es el que vamos a encarar primero, es como estamos manejando las acciones asincrónicas en nuestro componente. En este momento nuestro contenedor es el encargado de hacer un llamado al servidor para buscar los productos y categorías y las acciones de redux simplemente esperan ser llamadas con una lista de productos para agregar al estado. Esto tiee poquísima escalabilidad, porque cada vez que queramos ir a buscar los productos, toda la lógica asincrónica la tenemos que armar por fuera de nuestro store para que funcione. Sería mucho más fácil poder dispatchear una acción que nos permita hacer esto dentro de la lógica de nuestro store. Pero tenemos un problema, `dispatch`, espera una acción, un objeto, una función que realizá una acción asincrónica no puede devolver la acción, por lo que vamos a tener que usar un middleware que le agregue esta funcionalidad al dispatch, para eso existe `redux-thunk`
+
+
+### `redux-thunk`
+
+
+Lo primero que tenemos que hacer es instalar `redux-thunk` en nuestro proyecto:
+
+```
+npm install --save redux-thunk
+```
+
+Una vez que lo tenemos instalado vamos a agregarlo como middleware en nuestro `store`
+
+```js
+// redux/store.js
+import { createStore, applyMiddleware, compose } from 'redux';
+import thunk from 'redux-thunk';
+import rootReducer from './reducers';
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const middlewares = composeEnhancers(applyMiddleware(thunk));
+const store = createStore(rootReducer, middlewares);
+
+export default store;
+```
+
+Ahora hemos modificado nuestro `dispatch` para que cuando recibe una función en vez de un objeto, lo ejecute pasando el `dispatch` como parametro entonces ahora podemos hacer acciones como esta:
+
+```js
+function fetchProducts() {
+  return dispatch =>
+    axios.get('http://develop.plataforma5.la:3000/api/products')
+      .then(res => res.data)
+      .then(products => dispatch(setProducts(products)));
+}
+```
+
+Y en nuestro componente solo importamos esta acción y la dispatcheamos en el store:
+
+```js
+store.dispatch(fetchProducts());
+```
+
+Haz lo mismo con la acción de fetchCategories, muevela a las acciones de categorías, y ahora solo dispatchea la acción al store.
+
+Tenemos un problema que estuvimos evitando hasta ahora, que es el `loading` del estado del componente, ahora que nuestras acciones asincrónicas las esta manejando y redux, y respetando una de las reglas de oro de redux, donde el store es la única fuente de verdad.
+
+Entonces lo que vamos a agregar es al estado de `categories` y `products` la propiedad loading, que va ser un booleano, y vamos a crear la acción `FETCHING_PRODUCTS` y `FETCHING_CATEGORIES` que cambie el estado a `loading: true` y ahora cuando nos llegan los resultados vamos a volver a poner el `loading: false`.
+
+Ahora vamos a agregar que el estado del componente tome el loading de ambos estados, por lo que nuestro loading debería ser true, si uno de los loading, sigue siendo true.
+
+
+### `react-redux`
+
+Ahora vamos a presentar una librería clave para trabajar con react y redux. Esta librería nos va a permitir conectar nuestros componentes al store, y enviarlo como props al componente, ademas vamos a poder enviar acciones ya enlazadas al dispatch, para no tener que llamar al dispatch de nuestro store.
+
+Lo primero que tenemos que hacer es instalar la librería `react-redux`, luego importar el `Provider`, este va ser un componente que rodeé nuestra aplicación y le vamos a pasar el `store` como prop.
+
+```js
+render(
+  <Provider store={store}>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </Provider>,
+  appDiv,
+);
+```
+
+Ahora en vez de exportar el componente vamos a exportar el componente conectado, pasandole dos funciones, `mapStateToProps` y `mapDispatchToProps` que va a pasar el estado y las acciones como props del componente.
+
+
+```js
+const mapStateToProps = (state: ReduxState) => ({
+  products: state.products.items,
+});
+
+const mapDispatchToProps = (dispatch: (DispatchAction | Thunk) => any) => ({
+  fetchProducts: dispatch(fetchProducts()),
+});
+
+withRouter(connect(mapStateToProps, mapDispatchToProps)(App));
+
+```
+
+> Tenemos que usar el helper withRouter del router, porque el connect no recibe las locations por props, por lo tanto sin esto no se actualizaria cuando cambiamos la url actual.
+
+Ahora pasa como props el resto del estado y el resto de las acciones, y actualice el componente para que use los props en vez del estado y el `store`.

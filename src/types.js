@@ -21,10 +21,12 @@ export type CartItem = {
 
 export type ProductsState = {
   items: Product[],
+  loading: boolean,
 }
 
 export type CategoriesState = {
   items: Category[],
+  loading: boolean,
 }
 
 export type CartState = CartItem[];
@@ -52,11 +54,19 @@ export type SetCategoriesAction = {
   categories: Category[]
 };
 
-export type CategoriesActions = SetCategoriesAction;
+export type FetchingCategoriesAction = {
+  type: 'FETCHING_CATEGORIES',
+}
+
+export type CategoriesActions = SetCategoriesAction | FetchingCategoriesAction;
 
 export type SetProductsAction = {
   type: 'SET_PRODUCTS',
   products: Product[],
+};
+
+export type FetchingProductsAction = {
+  type: 'FETCHING_PRODUCTS',
 };
 
 export type AddProductAction = {
@@ -64,6 +74,9 @@ export type AddProductAction = {
   product: Product,
 };
 
-export type ProductsActions = SetProductsAction | AddProductAction;
+export type ProductsActions = SetProductsAction | AddProductAction | FetchingProductsAction;
 
 export type Actions = ProductsActions | CategoriesActions | CartActions;
+
+
+export type DispatchThunk = (d: Actions | (DispatchThunk) => mixed) => mixed;
